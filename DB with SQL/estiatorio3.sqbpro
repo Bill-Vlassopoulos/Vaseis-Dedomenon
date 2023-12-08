@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/billy/OneDrive/ΗΜΤΥ/7ο ΕΞΑΜΗΝΟ/ΒΑΣΕΙΣ ΔΕΔΟΜΕΝΩΝ/ΕΡΓΑΣΙΑ/estiatorio1.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="125"/><column_width id="3" width="4567"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,7:mainKRATISI"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1">BEGIN TRANSACTION;
+
+
+DROP TABLE IF EXISTS &quot;PELATIS&quot;;
+CREATE TABLE IF NOT EXISTS &quot;PELATIS&quot;(
+    &quot;id_pelati&quot; INTEGER NOT NULL,
+    &quot;onoma&quot; varchar(8),
+    &quot;eponimo&quot; varchar(8),
+    &quot;tilefono&quot; varchar(13),
+    &quot;email&quot; varchar(8),
+
+    PRIMARY KEY(&quot;id_pelati&quot;)
+);
+
+DROP TABLE IF EXISTS &quot;KRATISI&quot;;
+CREATE TABLE IF NOT EXISTS &quot;KRATISI&quot;(
+    &quot;id_kratisis&quot; INTEGER NOT NULL,
+    &quot;imera_ora&quot; datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    &quot;ora_afiksis&quot; datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    &quot;aritmos_atomon&quot; INTEGER,
+    
+    PRIMARY KEY(&quot;id_kratisis&quot;)
+);
+
+
+DROP TABLE IF EXISTS &quot;TRAPEZI&quot;;
+CREATE TABLE IF NOT EXISTS &quot;TRAPEZI&quot;(
+    &quot;id_trapeziou&quot; INTEGER NOT NULL,
+    &quot;thesi&quot; varchar(8),
+    &quot;aritmos_theseon&quot; INTEGER NOT NULL,
+    &quot;id_kratisis&quot; INTEGER,
+    CONSTRAINT &quot;TRAPEZI_fk0&quot; FOREIGN KEY(&quot;id_kratisis&quot;) REFERENCES &quot;KRATISI&quot;(&quot;id_kratisis&quot;) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY(&quot;id_trapeziou&quot;)
+);
+
+DROP TABLE IF EXISTS &quot;KRITIKI&quot;;
+CREATE TABLE IF NOT EXISTS &quot;KRITIKI&quot;(
+    &quot;id&quot; INTEGER NOT NULL,
+    &quot;bathmologia&quot; varchar(8),
+    &quot;perigrafi&quot; varchar(400),
+    &quot;imerominia&quot; datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    &quot;id_pelati&quot; INTEGER,
+    CONSTRAINT &quot;KRITIKI_fk0&quot; FOREIGN KEY(&quot;id_pelati&quot;) REFERENCES &quot;PELATIS&quot;(&quot;id_pelati&quot;) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY(&quot;id&quot;)
+);
+
+DROP TABLE IF EXISTS &quot;PARAGGELIA&quot;;
+CREATE TABLE IF NOT EXISTS &quot;PARAGGELIA&quot;(
+    &quot;id_paraggelias&quot; INTEGER NOT NULL,
+    &quot;imer_ora&quot; datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    &quot;kostos&quot; REAL,
+    &quot;id_trapeziou&quot; INTEGER NOT NULL,
+    CONSTRAINT &quot;PARAGGELIA_fk0&quot; FOREIGN KEY(&quot;id_trapeziou&quot;) REFERENCES &quot;TRAPEZI&quot;(&quot;id_trapeziou&quot;) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY(&quot;id_paraggelias&quot;)
+);
+
+
+DROP TABLE IF EXISTS &quot;MAGEIRAS&quot;;
+CREATE TABLE IF NOT EXISTS &quot;MAGEIRAS&quot; (
+	&quot;afm_ypallilou&quot;	integer NOT NULL,
+	&quot;onoma&quot;	varchar(30) NOT NULL,
+	&quot;eponimo&quot;	varchar(50) DEFAULT NULL,
+	&quot;misthos&quot;	integer NOT NULL,
+	&quot;tilefono&quot;	varchar(13) NOT NULL,
+	&quot;orario&quot;    varchar (30) NOT NULL,
+	PRIMARY KEY(&quot;afm_ypallilou&quot;)
+);
+
+DROP TABLE IF EXISTS &quot;SERVITOROS&quot;;
+CREATE TABLE IF NOT EXISTS &quot;SERVITOROS&quot; (
+	&quot;afm_ypallilou&quot;	integer NOT NULL,
+	&quot;onoma&quot;	varchar(30) NOT NULL,
+	&quot;eponimo&quot;	varchar(50) DEFAULT NULL,
+	&quot;misthos&quot;	integer NOT NULL,
+	&quot;tilefono&quot;	varchar(13) NOT NULL,
+	&quot;orario&quot;    varchar (30) NOT NULL,
+	PRIMARY KEY(&quot;afm_ypallilou&quot;)
+);
+
+DROP TABLE IF EXISTS &quot;PROMITHEYTIS&quot;;
+CREATE TABLE IF NOT EXISTS &quot;PROMITHEYTIS&quot; (
+	&quot;afm&quot;	integer NOT NULL,
+	&quot;onoma&quot;	varchar(30) NOT NULL,
+	&quot;epitheto&quot;	varchar(50) DEFAULT NULL,
+	&quot;tilefono&quot;	integer NOT NULL,
+	PRIMARY KEY(&quot;afm&quot;)
+);
+
+
+DROP TABLE IF EXISTS &quot;YLIKA&quot;;
+CREATE TABLE IF NOT EXISTS &quot;YLIKA&quot; (
+	&quot;id_ylikoy&quot;	integer NOT NULL,
+	&quot;onoma&quot;	varchar(30) NOT NULL,
+	&quot;katigoria&quot;	varchar(50) DEFAULT NULL,
+	&quot;diathesimi_posothta&quot;	integer NOT NULL,
+	PRIMARY KEY(&quot;id_ylikoy&quot;)
+);
+
+
+DROP TABLE IF EXISTS &quot;FAGITO&quot;;
+CREATE TABLE IF NOT EXISTS &quot;FAGITO&quot; (
+	&quot;id_proiontos&quot; INTEGER NOT NULL,
+	&quot;onoma&quot; VARCHAR(30) NOT NULL,
+	&quot;kostos&quot; REAL NOT NULL,
+	&quot;diathesimothta&quot; INTEGER NOT NULL CHECK (&quot;diathesimothta&quot; &gt;= 0),
+	&quot;syntagi&quot; varchar(100) NOT NULL,
+    &quot;eidika_charaktiristika&quot; varchar(15) NOT NULL,
+    PRIMARY KEY(&quot;id_proiontos&quot;)
+);
+
+
+DROP TABLE IF EXISTS &quot;POTO&quot;;
+CREATE TABLE IF NOT EXISTS &quot;POTO&quot; (
+	&quot;id_proiontos&quot; INTEGER NOT NULL,
+	&quot;onoma&quot; VARCHAR(30) NOT NULL,
+	&quot;kostos&quot; REAL NOT NULL,
+	&quot;diathesimothta&quot; INTEGER NOT NULL CHECK (&quot;diathesimothta&quot; &gt;= 0),
+	PRIMARY KEY(&quot;id_proiontos&quot;)
+);
+
+
+DROP TABLE IF EXISTS &quot;PARASKEYAZEI&quot;;
+CREATE TABLE IF NOT EXISTS &quot;PARASKEYAZEI&quot; (
+	&quot;afm_ypallilou&quot;	integer NOT NULL,
+	&quot;id_proiontos&quot;	integer NOT NULL,
+	CONSTRAINT &quot;PARASKEYAZEI_fk0&quot; FOREIGN KEY(&quot;afm_ypallilou&quot;) REFERENCES &quot;MAGEIRAS&quot;(&quot;afm_ypallilou&quot;) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT &quot;PARASKEYAZEI_fk1&quot; FOREIGN KEY(&quot;id_proiontos&quot;) REFERENCES &quot;FAGITO&quot;(&quot;id_proiontos&quot;) ON DELETE CASCADE ON UPDATE CASCADE
+	PRIMARY KEY(&quot;afm_ypallilou&quot;,&quot;id_proiontos&quot;)
+);
+
+
+DROP TABLE IF EXISTS &quot;APOTELEITAI&quot;;
+CREATE TABLE IF NOT EXISTS &quot;APOTELEITAI&quot; (
+	&quot;id_proiontos&quot;	integer NOT NULL,
+	&quot;id_ylikoy&quot; integer NOT NULL,
+	CONSTRAINT &quot;APOTELEITAI_fk0&quot; FOREIGN KEY(&quot;id_proiontos&quot;) REFERENCES &quot;FAGITO&quot;(&quot;id_proiontos&quot;) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT &quot;APOTELEITAI_fk1&quot; FOREIGN KEY(&quot;id_ylikoy&quot;) REFERENCES &quot;YLIKA&quot;(&quot;id_ylikoy&quot;) ON DELETE CASCADE ON UPDATE CASCADE
+	PRIMARY KEY(&quot;id_proiontos&quot;,&quot;id_ylikoy&quot;)
+);
+
+
+
+
+DROP TABLE IF EXISTS &quot;PERILAMBANEI&quot;;
+CREATE TABLE IF NOT EXISTS &quot;PERILAMBANEI&quot; (
+	&quot;id_paraggelias&quot;	integer NOT NULL,
+	&quot;id_proiontos&quot;	integer NOT NULL,
+	PRIMARY KEY(&quot;id_paraggelias&quot;),
+	CONSTRAINT &quot;PERILAMBANEI_fk0&quot; FOREIGN KEY(&quot;id_paraggelias&quot;) REFERENCES &quot;PARAGGELIA&quot;(&quot;id_paraggelias&quot;) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT &quot;PERILAMBANEI_fk1&quot; FOREIGN KEY(&quot;id_proiontos&quot;) REFERENCES &quot;POTO&quot;(&quot;id_proiontos&quot;) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT &quot;PERILAMBANEI_fk2&quot; FOREIGN KEY(&quot;id_proiontos&quot;) REFERENCES &quot;FAGITO&quot;(&quot;id_proiontos&quot;) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+DROP TABLE IF EXISTS &quot;ANALAMBANEI&quot;;
+CREATE TABLE IF NOT EXISTS &quot;ANALAMBANEI&quot; (
+	&quot;id_paraggelias&quot;	integer NOT NULL,
+	&quot;afm_ypallilou&quot;	integer NOT NULL,
+	PRIMARY KEY(&quot;id_paraggelias&quot;),
+	CONSTRAINT &quot;ANALAMBANEI_fk0&quot; FOREIGN KEY(&quot;id_paraggelias&quot;) REFERENCES &quot;PARAGGELIA&quot;(&quot;id_paraggelias&quot;) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT &quot;ANALAMBANEI_fk1&quot; FOREIGN KEY(&quot;afm_ypallilou&quot;) REFERENCES &quot;SERVITOROS&quot;(&quot;afm_ypallilou&quot;) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+DROP TABLE IF EXISTS &quot;EFODIAZEI&quot;;
+CREATE TABLE IF NOT EXISTS &quot;EFODIAZEI&quot; (
+	&quot;afm&quot;	integer NOT NULL,
+	&quot;id_ylikoy&quot;	integer NOT NULL,
+	PRIMARY KEY(&quot;id_ylikoy&quot;, &quot;afm&quot;),
+	CONSTRAINT &quot;EFODIAZEI_fk0&quot; FOREIGN KEY(&quot;afm&quot;) REFERENCES &quot;PROMITHEYTIS&quot;(&quot;afm&quot;) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT &quot;EFODIAZEI_fk1&quot; FOREIGN KEY(&quot;id_ylikoy&quot;) REFERENCES &quot;YLIKA&quot;(&quot;id_ylikoy&quot;) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+DROP TABLE IF EXISTS &quot;PROMITHEVEI&quot;;
+CREATE TABLE IF NOT EXISTS &quot;PROMITHEVEI&quot; (
+	&quot;afm&quot;	integer NOT NULL,
+	&quot;id_proiontos&quot;	integer NOT NULL,
+	&quot;imer_paradosis&quot; datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+	PRIMARY KEY(&quot;afm&quot;, &quot;id_proiontos&quot;),
+	CONSTRAINT &quot;PROMITHEVEI_fk0&quot; FOREIGN KEY(&quot;afm&quot;) REFERENCES &quot;PROMITHEYTIS&quot;(&quot;afm&quot;) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT &quot;PROMITHEVEI_fk1&quot; FOREIGN KEY(&quot;id_proiontos&quot;) REFERENCES &quot;POTO&quot;(&quot;id_proiontos&quot;) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
