@@ -7,7 +7,7 @@ cursor = conn.cursor()
 commands = [
     """
 CREATE TABLE "PELATIS"(
-    "id_pelati" INTEGER NOT NULL,
+    "id_pelati" INTEGER NOT NULL UNIQUE,
     "onoma" varchar(8),
     "eponimo" varchar(8),
     "tilefono" varchar(13),
@@ -18,7 +18,7 @@ CREATE TABLE "PELATIS"(
 """,
     """
 CREATE TABLE "KRATISI"(
-    "id_kratisis" INTEGER NOT NULL,
+    "id_kratisis" INTEGER NOT NULL UNIQUE,
     "imera_ora" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
     "ora_afiksis" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
     "aritmos_atomon" INTEGER,
@@ -28,9 +28,9 @@ CREATE TABLE "KRATISI"(
 """,
     """
 CREATE TABLE "TRAPEZI"(
-    "id_trapeziou" INTEGER NOT NULL,
+    "id_trapeziou" INTEGER NOT NULL UNIQUE,
     "thesi" varchar(8),
-    "aritmos_theseon" INTEGER NOT NULL,
+    "aritmos_theseon" INTEGER NOT NULL CHECK("aritmos_theseon">0),
     "id_kratisis" INTEGER,
     FOREIGN KEY("id_kratisis") REFERENCES "KRATISI"("id_kratisis"),
     PRIMARY KEY("id_trapeziou")
@@ -38,8 +38,8 @@ CREATE TABLE "TRAPEZI"(
 """,
     """
 CREATE TABLE "KRITIKI"(
-    "id" INTEGER NOT NULL,
-    "bathmologia" varchar(8),
+    "id" INTEGER NOT NULL UNIQUE,
+    "bathmologia" varchar(8) CHECK("bathmologia">0),
     "perigrafi" varchar(400),
     "imerominia" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
     "id_pelati" INTEGER,
@@ -49,9 +49,9 @@ CREATE TABLE "KRITIKI"(
 """,
     """
 CREATE TABLE "PARAGGELIA"(
-    "id_paraggelias" INTEGER NOT NULL,
+    "id_paraggelias" INTEGER NOT NULL UNIQUE,
     "imer_ora" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-    "kostos" REAL,
+    "kostos" REAL CHECK("kostos">0),
     "id_trapeziou" INTEGER NOT NULL,
     FOREIGN KEY("id_trapeziou") REFERENCES "TRAPEZI"("id_trapeziou"),
     PRIMARY KEY("id_paraggelias")
@@ -59,10 +59,10 @@ CREATE TABLE "PARAGGELIA"(
 """,
     """
 CREATE TABLE "MAGEIRAS" (
-	"afm_ypallilou"	integer NOT NULL,
+	"afm_ypallilou"	integer NOT NULL UNIQUE,
 	"onoma"	varchar(30) NOT NULL,
 	"eponimo"	varchar(50) DEFAULT NULL,
-	"misthos"	integer NOT NULL,
+	"misthos"	REAL NOT NULL CHECK("misthos>0"),
 	"tilefono"	varchar(13) NOT NULL,
 	"orario"    varchar (30) NOT NULL,
 	PRIMARY KEY("afm_ypallilou")
@@ -70,7 +70,7 @@ CREATE TABLE "MAGEIRAS" (
 """,
     """
 CREATE TABLE "SERVITOROS" (
-	"afm_ypallilou"	integer NOT NULL,
+	"afm_ypallilou"	integer NOT NULL UNIQUE,
 	"onoma"	varchar(30) NOT NULL,
 	"eponimo"	varchar(50) DEFAULT NULL,
 	"misthos"	integer NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE "SERVITOROS" (
     """
 
 CREATE TABLE "PROMITHEYTIS" (
-	"afm"	integer NOT NULL,
+	"afm"	integer NOT NULL UNIQUE,
 	"onoma"	varchar(30) NOT NULL,
 	"epitheto"	varchar(50) DEFAULT NULL,
 	"tilefono"	integer NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE "PROMITHEYTIS" (
 """,
     """
 CREATE TABLE "YLIKA" (
-	"id_ylikoy"	integer NOT NULL,
+	"id_ylikoy"	integer NOT NULL UNIQUE,
 	"onoma"	varchar(30) NOT NULL,
 	"katigoria"	varchar(50) DEFAULT NULL,
 	"diathesimi_posothta"	integer NOT NULL,
@@ -100,21 +100,22 @@ CREATE TABLE "YLIKA" (
 """,
     """
 CREATE TABLE "FAGITO" (
-	"id_proiontos" INTEGER NOT NULL,
+	"id_proiontos" INTEGER NOT NULL UNIQUE,
 	"onoma" VARCHAR(30) NOT NULL,
 	"kostos" REAL NOT NULL,
 	"diathesimothta" INTEGER NOT NULL CHECK ("diathesimothta" >= 0),
-	"syntagi" varchar(100) NOT NULL,
+	"syntagi" varchar(500) NOT NULL,
     PRIMARY KEY("id_proiontos")
 );
 """,
     """
 CREATE TABLE "POTO" (
-	"id_proiontos" INTEGER NOT NULL,
+	"id_proiontos" INTEGER NOT NULL UNIQUE,
 	"onoma" VARCHAR(30) NOT NULL,
-	"kostos" REAL NOT NULL,
+	"kostos" REAL NOT NULL CHECK(kostos>0.0),
 	"diathesimothta" INTEGER NOT NULL CHECK ("diathesimothta" >= 0),
-	PRIMARY KEY("id_proiontos")
+	PRIMARY KEY("id_proiontos"),
+	CHECK ("id_proiontos" NOT IN (SELECT id_proiontos FROM FAGITO))
 );
 """,
     """
@@ -148,7 +149,7 @@ CREATE TABLE "PERILAMBANEI" (
 """,
     """
 CREATE TABLE "ANALAMBANEI" (
-	"id_paraggelias"	integer NOT NULL,
+	"id_paraggelias" integer NOT NULL,
 	"afm_ypallilou"	integer NOT NULL,
     FOREIGN KEY("id_paraggelias") REFERENCES "PARAGGELIA"("id_paraggelias"),
     FOREIGN KEY("afm_ypallilou") REFERENCES "SERVITOROS"("afm_ypallilou"),
