@@ -1,0 +1,10 @@
+1|Drink1|5.00|100|Refreshing Lemonade
+2|Drink2|3.50|80|Classic Mojito
+3|Drink3|4.25|90|Red Wine
+4|Drink4|6.00|120|Espresso
+5|Drink5|5.75|110|Green Tea
+6|Drink6|4.50|95|Orange Juice
+7|Drink7|7.00|130|Cosmopolitan Cocktail
+8|Drink8|3.75|85|Iced Coffee
+9|Drink9|6.50|105|Berry Smoothie
+10|Drink10|5.25|115|Sparkling Water

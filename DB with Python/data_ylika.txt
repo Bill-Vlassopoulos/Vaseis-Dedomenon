@@ -1,0 +1,10 @@
+1|Carrot|Vegetables|100
+2|Chicken|Meat|50
+3|Milk|Dairy|75
+4|Rice|Grains|200
+5|Salmon|Seafood|30
+6|Cumin|Spices|40
+7|Soy Sauce|Sauces|60
+8|Orange Juice|Beverages|120
+9|Chocolate|Desserts|90
+10|Apple|Fruits|80

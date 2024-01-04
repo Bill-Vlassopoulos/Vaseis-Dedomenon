@@ -1,0 +1,10 @@
+1|Pasta with Tomato Sauce|15.00|20|Pasta, Tomato Sauce
+2|Grilled Chicken with Vegetables|12.50|15|Grilled Chicken, Vegetables
+3|Vegetarian Pizza|10.00|25|Dough, Tomato Sauce, Cheese, Vegetables
+4|Salmon with Lemon Dill Sauce|18.75|18|Salmon, Lemon Dill Sauce
+5|Shrimp Stir-Fry|20.00|12|Shrimp, Vegetables, Stir-Fry Sauce
+6|Spaghetti Bolognese|16.50|22|Spaghetti, Bolognese Sauce
+7|Beef Tacos|14.25|17|Beef, Taco Shells, Toppings
+8|Lobster Risotto|22.50|10|Lobster, Risotto
+9|Chocolate Fondant|19.00|14|Chocolate, Fondant
+10|Fresh Fruit Salad|13.75|21|Fresh Fruits, Salad
