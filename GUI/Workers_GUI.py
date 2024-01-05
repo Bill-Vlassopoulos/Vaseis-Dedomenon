@@ -28,7 +28,9 @@ class MainWindow(QWidget):
         self.new_paraggelia_btn = QPushButton("Νέα Παραγγελία")
         self.new_paraggelia_btn.clicked.connect(self.open_new_paraggelia)
 
-        self.edit_paraggelia_btn = QPushButton("Διαχείριση Παραγγελίας")
+        self.edit_paraggelia_btn = QPushButton(
+            "Διαχείριση Παραγγελίας/Κόστος Παραγγελίας"
+        )
         self.edit_paraggelia_btn.clicked.connect(self.open_paraggelia_edit)
 
         self.paradotea_piata_pota_btn = QPushButton("Πιάτα/Ποτά προς παράδοση")
@@ -263,6 +265,60 @@ class Kratiseis(QWidget):
             if (today + timedelta(days=x)).weekday() != 0
         ]
         return next_10_days
+
+
+class Mageiras(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setFixedSize(650, 650)
+        vbox = QVBoxLayout()
+        pros_paradosi_btn = QPushButton("Πιάτα έτοιμα προς παράδοση")
+        pros_paradosi_btn.clicked.connect(self.open_etoima_piata)
+        katagrafi_ylikon_btn = QPushButton("Καταγραφή Υλικών")
+        katagrafi_ylikon_btn.clicked.connect(self.open_inventory_update)
+        vbox.addWidget(pros_paradosi_btn)
+        vbox.addWidget(katagrafi_ylikon_btn)
+        self.setLayout(vbox)
+
+    def open_etoima_piata(self):
+        self.et_pt = Etoima_Piata()
+        self.et_pt.show()
+
+    def open_inventory_update(self):
+        self.invet = Ylika_Update()
+        self.invet.show()
+
+
+class Etoima_Piata(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setFixedSize(650, 650)
+        vbox = QVBoxLayout()
+        self.fagito_table = QTableWidget()
+        self.fagito_table.setRowCount(3)
+        self.fagito_table.setColumnCount(3)
+        self.fagito_table.setHorizontalHeaderLabels(["Όνομα", "Ποσότητα", "Τραπέζι"])
+        piato_pros_paradosi_btn = QPushButton("Πιάτο έτοιμο προς παράδοση")
+        vbox.addWidget(self.fagito_table)
+        vbox.addWidget(piato_pros_paradosi_btn)
+        self.setLayout(vbox)
+
+
+class Ylika_Update(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setFixedSize(350, 350)
+        vbox = QVBoxLayout()
+        ylika_cmb = QComboBox()
+        yliko_label = QLabel("Επιλέξτε Υλικό:")
+        posotita_label = QLabel("Δώστε την διαθέσιμη ποσότητα του υλικού:")
+        posotita_line_edit = QLineEdit()
+        vbox.addWidget(yliko_label)
+        vbox.addWidget(ylika_cmb)
+        vbox.addWidget(posotita_label)
+        vbox.addWidget(posotita_line_edit)
+        vbox.addStretch()
+        self.setLayout(vbox)
 
 
 if __name__ == "__main__":

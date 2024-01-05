@@ -8,22 +8,23 @@ commands = [
     """
 CREATE TABLE "PELATIS"(
     "id_pelati" INTEGER NOT NULL UNIQUE,
-    "onoma" varchar(8),
-    "eponimo" varchar(8),
-    "tilefono" varchar(13),
-    "email" varchar(8),
+    "onoma" varchar(20) NOT NULL,
+    "eponimo" varchar(20) NOT NULL,
+    "tilefono" varchar(13) NOT NULL,
+    "email" varchar(20),
+    "username" varchar(30),
+    "password" varchar(20),
 
-    PRIMARY KEY("id_pelati")
+    PRIMARY KEY("id_pelati" AUTOINCREMENT)
 );
 """,
     """
 CREATE TABLE "KRATISI"(
-    "id_kratisis" INTEGER NOT NULL UNIQUE,
+    "id_kratisis" INTEGER NOT NULL UNIQUE ,
     "imera_ora" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-    "ora_afiksis" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
     "aritmos_atomon" INTEGER,
     
-    PRIMARY KEY("id_kratisis")
+    PRIMARY KEY("id_kratisis" AUTOINCREMENT)
 );
 """,
     """
@@ -38,23 +39,23 @@ CREATE TABLE "TRAPEZI"(
 """,
     """
 CREATE TABLE "KRITIKI"(
-    "id" INTEGER NOT NULL UNIQUE,
+    "id" INTEGER NOT NULL UNIQUE ,
     "bathmologia" varchar(8) CHECK("bathmologia">0),
     "perigrafi" varchar(400),
     "imerominia" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
     "id_pelati" INTEGER,
     FOREIGN KEY("id_pelati") REFERENCES "PELATIS"("id_pelati") ,
-    PRIMARY KEY("id")
+    PRIMARY KEY("id" AUTOINCREMENT)
 );
 """,
     """
 CREATE TABLE "PARAGGELIA"(
-    "id_paraggelias" INTEGER NOT NULL UNIQUE,
+    "id_paraggelias" INTEGER NOT NULL UNIQUE ,
     "imer_ora" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
     "kostos" REAL CHECK("kostos">0),
     "id_trapeziou" INTEGER NOT NULL,
     FOREIGN KEY("id_trapeziou") REFERENCES "TRAPEZI"("id_trapeziou"),
-    PRIMARY KEY("id_paraggelias")
+    PRIMARY KEY("id_paraggelias" AUTOINCREMENT)
 );
 """,
     """
@@ -91,31 +92,30 @@ CREATE TABLE "PROMITHEYTIS" (
 """,
     """
 CREATE TABLE "YLIKA" (
-	"id_ylikoy"	integer NOT NULL UNIQUE,
+	"id_ylikoy"	integer NOT NULL UNIQUE ,
 	"onoma"	varchar(30) NOT NULL,
 	"katigoria"	varchar(50) DEFAULT NULL,
 	"diathesimi_posothta"	integer NOT NULL,
-	PRIMARY KEY("id_ylikoy")
+	PRIMARY KEY("id_ylikoy" AUTOINCREMENT)
 );
 """,
     """
 CREATE TABLE "FAGITO" (
-	"id_proiontos" INTEGER NOT NULL UNIQUE,
+	"id_proiontos" INTEGER NOT NULL UNIQUE ,
 	"onoma" VARCHAR(30) NOT NULL,
 	"kostos" REAL NOT NULL,
 	"diathesimothta" INTEGER NOT NULL CHECK ("diathesimothta" >= 0),
 	"syntagi" varchar(500) NOT NULL,
-    PRIMARY KEY("id_proiontos")
+    PRIMARY KEY("id_proiontos" AUTOINCREMENT)
 );
 """,
     """
 CREATE TABLE "POTO" (
-	"id_proiontos" INTEGER NOT NULL UNIQUE,
+	"id_proiontos" INTEGER NOT NULL UNIQUE ,
 	"onoma" VARCHAR(30) NOT NULL,
 	"kostos" REAL NOT NULL CHECK(kostos>0.0),
 	"diathesimothta" INTEGER NOT NULL CHECK ("diathesimothta" >= 0),
-	PRIMARY KEY("id_proiontos"),
-	CHECK ("id_proiontos" NOT IN (SELECT id_proiontos FROM FAGITO))
+	PRIMARY KEY("id_proiontos" AUTOINCREMENT)
 );
 """,
     """

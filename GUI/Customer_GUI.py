@@ -30,20 +30,24 @@ class MainWindow(QWidget):
         line_edits_vbox = QVBoxLayout()
 
         ########################## USERNAME #########################
-        name = QLineEdit()
-        name.setPlaceholderText("username")
-        name.setFixedHeight(50)
-        name.setFixedWidth(250)
-        name.setStyleSheet("color:white; border:2px solid white; border-radius:10;")
-        name.setFont(QFont("Arial", 12))
+        self.name = QLineEdit()
+        self.name.setPlaceholderText("username")
+        self.name.setFixedHeight(50)
+        self.name.setFixedWidth(250)
+        self.name.setStyleSheet(
+            "color:white; border:2px solid white; border-radius:10;"
+        )
+        self.name.setFont(QFont("Arial", 12))
 
         ########################## PASSWORD #########################
-        password = QLineEdit()
-        password.setPlaceholderText("password")
-        password.setFixedHeight(50)
-        password.setFixedWidth(250)
-        password.setStyleSheet("color:white; border:2px solid white; border-radius:10;")
-        password.setFont(QFont("Arial", 12))
+        self.password = QLineEdit()
+        self.password.setPlaceholderText("password")
+        self.password.setFixedHeight(50)
+        self.password.setFixedWidth(250)
+        self.password.setStyleSheet(
+            "color:white; border:2px solid white; border-radius:10;"
+        )
+        self.password.setFont(QFont("Arial", 12))
 
         ########################## LOG IN BUTTON #########################
         login_button = QPushButton("Log In", self)
@@ -170,6 +174,7 @@ class PelatisWindow(QWidget):
         vbox.addWidget(self.people)
         vbox.addStretch()
         self.kratisi_btn = QPushButton("Κάνε Κράτηση")
+        vbox.addWidget(self.kratisi_btn)
         self.kratisi.setLayout(vbox)
         self.kratisi_tab.addTab(self.kratisi, "Κράτηση")
         #        self.kratisi_tab.setFixedSize(400, 330)
