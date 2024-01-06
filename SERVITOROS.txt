@@ -1,0 +1,6 @@
+12315, James, Stephens, 1000, 723237, daytime
+34749, Maria, Stones, 1200, 325802, daytime
+99063, Jonathan, Moss, 1100, 967467, nightime
+12488, Penny, Lima, 1100, 344683, nightime
+34749, Nicole, Brown, 1000, 336702, daytime
+99063, George, Bush, 1200, 939267, nightime

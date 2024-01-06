@@ -1,0 +1,4 @@
+12345, James, Hawking, 1000, 723987, daytime
+34709, Nicole, Smith, 2000, 393802, daytime
+99023, Nick, James, 1500, 903267, nightime
+12498, Anna, Obama, 2100, 341283, nightime

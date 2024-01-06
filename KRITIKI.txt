@@ -1,0 +1,8 @@
+4, "Exquisite flavors, impeccable service—this restaurant elevates dining to an unforgettable experience. A culinary masterpiece!",  2024-12-9 20:15:00
+5,  "Charming ambiance, delectable dishes—every bite is a journey through perfection.",  2024-12-10 20:45:00
+4, "Exceptional service, innovative menu—each dish is a work of art. A delightful culinary adventure awaits.",  2024-12-10 21:15:00
+4, "Sensational flavors, stylish setting—this restaurant redefines excellence. A gastronomic paradise for discerning palates.",  2024-12-11 22:15:00
+5,  "Elegant ambiance, divine cuisine—each plate is a symphony of taste. A true culinary gem.",  2024-12-11 18:05:00
+4, "Outstanding service, delightful ambiance—every dish is a revelation. An unforgettable dining escapade awaits.",  2024-01-01 20:00:00
+5, "Mouthwatering creations, attentive staff—this restaurant is a haven for food enthusiasts. Culinary brilliance at its finest.",  2024-01-01 21:15:00
+4,  "A culinary delight, impeccable presentation—this establishment sets the standard for extraordinary dining experiences.",  2024-01-02 22:00:00
