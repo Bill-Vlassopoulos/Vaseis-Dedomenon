@@ -6,6 +6,10 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import QWidget
 from PyQt5.sip import voidptr
 from datetime import datetime, timedelta
+import sqlite3
+
+conn = sqlite3.connect("SmartRestaurant.db")
+cursor = conn.cursor()
 
 
 def main():
@@ -52,7 +56,7 @@ class MainWindow(QWidget):
         ########################## LOG IN BUTTON #########################
         login_button = QPushButton("Log In", self)
         login_button.setStyleSheet("background-color: orange; color: black;")
-        login_button.clicked.connect(self.pelatis_window)
+        login_button.clicked.connect(self.check_user)
 
         ########################## CREATE ACCOUNT BUTTON #########################
         create_account_button = QPushButton("Create Account", self)
@@ -61,8 +65,8 @@ class MainWindow(QWidget):
 
         line_edits_vbox.setContentsMargins(90, 20, 20, 20)
         line_edits_vbox.addStretch()
-        line_edits_vbox.addWidget(name)
-        line_edits_vbox.addWidget(password)
+        line_edits_vbox.addWidget(self.name)
+        line_edits_vbox.addWidget(self.password)
         line_edits_vbox.addStretch()
 
         vbox.addLayout(line_edits_vbox)
@@ -74,6 +78,20 @@ class MainWindow(QWidget):
 
         vbox.addLayout(hbox)
         self.setLayout(vbox)
+
+    def check_user(self):
+        query = "SELECT username, password FROM PELATIS"
+        cursor.execute(query)
+        results = cursor.fetchall()
+        if (self.name.text(), self.password.text()) in results:
+            self.pelatis_win = PelatisWindow(
+                username=self.name.text(), password=self.password.text()
+            )
+            self.pelatis_win.show()
+            self.close()
+        else:
+            self.name.setText("")
+            self.password.setText("")
 
     def create_account(self):
         self.second = SecondWindow()
@@ -93,45 +111,75 @@ class SecondWindow(QWidget):
         self.setStyleSheet("background-color: black;")
         vbox = QVBoxLayout()
         main_vbox = QVBoxLayout()
-        name = QLineEdit()
+
         hbox = QHBoxLayout()
 
-        name.setPlaceholderText("username")
-        name.setFixedHeight(50)
-        name.setFixedWidth(250)
-        name.setStyleSheet("color:white; border:2px solid white; border-radius:10;")
-        name.setFont(QFont("Arial", 12))
+        self.username = QLineEdit()
+        self.username.setPlaceholderText("username")
+        self.username.setFixedHeight(50)
+        self.username.setFixedWidth(250)
+        self.username.setStyleSheet(
+            "color:white; border:2px solid white; border-radius:10;"
+        )
+        self.username.setFont(QFont("Arial", 12))
 
-        password = QLineEdit()
-        password.setPlaceholderText("password")
-        password.setFixedHeight(50)
-        password.setFixedWidth(250)
-        password.setStyleSheet("color:white; border:2px solid white; border-radius:10;")
-        password.setFont(QFont("Arial", 12))
+        self.password = QLineEdit()
+        self.password.setPlaceholderText("password")
+        self.password.setFixedHeight(50)
+        self.password.setFixedWidth(250)
+        self.password.setStyleSheet(
+            "color:white; border:2px solid white; border-radius:10;"
+        )
+        self.password.setFont(QFont("Arial", 12))
 
-        tilefono = QLineEdit()
-        tilefono.setPlaceholderText("phone number(69********)")
-        tilefono.setFixedHeight(50)
-        tilefono.setFixedWidth(250)
-        tilefono.setStyleSheet("color:white; border:2px solid white; border-radius:10;")
-        tilefono.setFont(QFont("Arial", 12))
+        self.tilefono = QLineEdit()
+        self.tilefono.setPlaceholderText("phone number(69********)")
+        self.tilefono.setFixedHeight(50)
+        self.tilefono.setFixedWidth(250)
+        self.tilefono.setStyleSheet(
+            "color:white; border:2px solid white; border-radius:10;"
+        )
+        self.tilefono.setFont(QFont("Arial", 12))
 
-        email = QLineEdit()
-        email.setPlaceholderText("email (name@example.com)")
-        email.setFixedHeight(50)
-        email.setFixedWidth(250)
-        email.setStyleSheet("color:white; border:2px solid white; border-radius:10;")
-        email.setFont(QFont("Arial", 12))
+        self.email = QLineEdit()
+        self.email.setPlaceholderText("email (name@example.com)")
+        self.email.setFixedHeight(50)
+        self.email.setFixedWidth(250)
+        self.email.setStyleSheet(
+            "color:white; border:2px solid white; border-radius:10;"
+        )
+        self.email.setFont(QFont("Arial", 12))
+
+        self.onoma = QLineEdit()
+        self.onoma.setPlaceholderText("name")
+        self.onoma.setFixedHeight(50)
+        self.onoma.setFixedWidth(250)
+        self.onoma.setStyleSheet(
+            "color:white; border:2px solid white; border-radius:10;"
+        )
+        self.onoma.setFont(QFont("Arial", 12))
+
+        self.epitheto = QLineEdit()
+        self.epitheto.setPlaceholderText("surname")
+        self.epitheto.setFixedHeight(50)
+        self.epitheto.setFixedWidth(250)
+        self.epitheto.setStyleSheet(
+            "color:white; border:2px solid white; border-radius:10;"
+        )
+        self.epitheto.setFont(QFont("Arial", 12))
 
         create_account_button = QPushButton("Create Account", self)
         create_account_button.setStyleSheet("background-color: orange; color: black;")
         create_account_button.setMinimumSize(100, 50)
+        create_account_button.clicked.connect(self.pelatis_window)
         #        create_account_button.clicked.connect(self.create_account)
 
-        vbox.addWidget(name)
-        vbox.addWidget(password)
-        vbox.addWidget(tilefono)
-        vbox.addWidget(email)
+        vbox.addWidget(self.username)
+        vbox.addWidget(self.password)
+        vbox.addWidget(self.tilefono)
+        vbox.addWidget(self.email)
+        vbox.addWidget(self.onoma)
+        vbox.addWidget(self.epitheto)
         vbox.setContentsMargins(90, 40, 40, 40)
 
         hbox.addStretch()
@@ -143,9 +191,43 @@ class SecondWindow(QWidget):
 
         self.setLayout(main_vbox)
 
+    def pelatis_window(self):
+        query = "SELECT username, password FROM PELATIS"
+        cursor.execute(query)
+        results = cursor.fetchall()
+        self.email
+        if (self.username, self.password) in results:
+            self.username.setText("")
+            self.password.setText("")
+            self.onoma.setText("")
+            self.epitheto.setText("")
+            self.email.setText("")
+            self.tilefono.setText("")
+        else:
+            query = "INSERT INTO PELATIS (onoma, eponimo, tilefono, email, username, password) VALUES(?,?,?,?,?,?)"
+            cursor.execute(
+                query,
+                (
+                    self.onoma.text(),
+                    self.epitheto.text(),
+                    self.tilefono.text(),
+                    self.email.text(),
+                    self.username.text(),
+                    self.password.text(),
+                ),
+            )
+            conn.commit()
+            username = self.username.text()
+            password = self.password.text()
+            self.pelatis_win = PelatisWindow(username=username, password=password)
+            self.pelatis_win.show()
+
 
 class PelatisWindow(QWidget):
-    def __init__(self):
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+        # self.id_pelati = id_pelati
         super(PelatisWindow, self).__init__()
         self.setWindowTitle("Estiatorio")
         self.setGeometry(500, 300, 700, 700)
@@ -185,9 +267,16 @@ class PelatisWindow(QWidget):
         vbox_1.addWidget(QLabel("Γράψτε Κριτική:"))
         self.textedit = QTextEdit()
         vbox_1.addWidget(self.textedit)
+        self.slider = QSlider(Qt.Horizontal)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(10)
+        self.slider.setTickPosition(QSlider.TicksAbove)
+        self.slider.setTickInterval(1)
+        vbox_1.addWidget(self.slider)
 
-        ypovoli_kritikis_btn = QPushButton("Υποβολή Κριτικής")
-        vbox_1.addWidget(ypovoli_kritikis_btn)
+        self.ypovoli_kritikis_btn = QPushButton("Υποβολή Κριτικής")
+        self.ypovoli_kritikis_btn.clicked.connect(self.ypovoli_kritikis)
+        vbox_1.addWidget(self.ypovoli_kritikis_btn)
         self.kritiki.setLayout(vbox_1)
         self.kritiki_tab.addTab(self.kritiki, "Κριτική")
         #        self.kritiki_tab.setFixedSize(400, 330)
@@ -223,6 +312,32 @@ class PelatisWindow(QWidget):
             if (today + timedelta(days=x)).weekday() != 0
         ]
         return next_10_days
+
+    def ypovoli_kritikis(self):
+        text = self.textedit.toPlainText()
+        query = "select id_pelati from PELATIS where username='{}' and password='{}'".format(
+            self.username, self.password
+        )
+        cursor.execute(query)
+        results = cursor.fetchall()
+        self.id_pelati = results[0][0]
+
+        try:
+            query = "INSERT INTO KRITIKI (id, bathmologia, perigrafi, imerominia, id_pelati) VALUES(NULL,?,?,?,?)"
+            cursor.execute(
+                query, (str(self.slider.value()), text, getdatetime(), self.id_pelati)
+            )
+            conn.commit()
+
+        except Exception as e:
+            print("Error " + str(e))
+        self.textedit.setText("")
+
+
+def getdatetime():
+    now = datetime.now()
+    formatted_datetime = now.strftime("%Y-%m-%d %H:%M:%S")
+    return formatted_datetime
 
 
 if __name__ == "__main__":
