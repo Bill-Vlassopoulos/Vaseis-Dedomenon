@@ -17,22 +17,26 @@ CREATE TABLE "PELATIS"(
 );
 """,
     """
+CREATE TABLE "TRAPEZI"(
+    "id_trapeziou" varchar(10) NOT NULL,
+    "thesi" varchar(20),
+    "aritmos_theseon" INTEGER NOT NULL CHECK("aritmos_theseon">0),
+    
+    PRIMARY KEY("id_trapeziou")
+);
+"""
+    ,
+    """
 CREATE TABLE "KRATISI"(
     "id_kratisis"  INTEGER PRIMARY KEY AUTOINCREMENT,
     "imera_ora" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-    "aritmos_atomon" INTEGER
+    "arithmos_atomon" INTEGER,
+    "id_trapeziou" varchar(10) NOT NULL,
+    
+    FOREIGN KEY("id_trapeziou") REFERENCES "TRAPEZI"("id_trapeziou")
 );
 """,
-    """
-CREATE TABLE "TRAPEZI"(
-    "id_trapeziou" varchar(10) NOT NULL UNIQUE,
-    "thesi" varchar(20),
-    "aritmos_theseon" INTEGER NOT NULL CHECK("aritmos_theseon">0),
-    "id_kratisis" INTEGER,
-    FOREIGN KEY("id_kratisis") REFERENCES "KRATISI"("id_kratisis"),
-    PRIMARY KEY("id_trapeziou")
-);
-""",
+
     """
 CREATE TABLE "KRITIKI"(
     "id" INTEGER NOT NULL UNIQUE ,
@@ -97,50 +101,52 @@ CREATE TABLE "YLIKA" (
 """,
     """
 CREATE TABLE "FAGITO" (
-	"id_proiontos" INTEGER NOT NULL UNIQUE ,
+	"id_fagitoy" INTEGER NOT NULL UNIQUE ,
 	"onoma" VARCHAR(30) NOT NULL,
 	"kostos" REAL NOT NULL,
 	"diathesimothta" INTEGER NOT NULL CHECK ("diathesimothta" >= 0),
 	"syntagi" varchar(500) NOT NULL,
-    PRIMARY KEY("id_proiontos" AUTOINCREMENT)
+    PRIMARY KEY("id_fagitoy" AUTOINCREMENT)
 );
 """,
     """
 CREATE TABLE "POTO" (
-	"id_proiontos" INTEGER NOT NULL UNIQUE ,
+	"id_potoy" INTEGER NOT NULL UNIQUE ,
 	"onoma" VARCHAR(30) NOT NULL,
 	"kostos" REAL NOT NULL CHECK(kostos>0.0),
 	"diathesimothta" INTEGER NOT NULL CHECK ("diathesimothta" >= 0),
-	PRIMARY KEY("id_proiontos" AUTOINCREMENT)
+	PRIMARY KEY("id_potoy" AUTOINCREMENT)
 );
 """,
     """
 CREATE TABLE "PARASKEYAZEI" (
 	"afm_ypallilou"	integer NOT NULL,
-	"id_proiontos"	integer NOT NULL,
+	"id_fagitoy"	integer NOT NULL,
 	FOREIGN KEY("afm_ypallilou") REFERENCES "MAGEIRAS"("afm_ypallilou")
-	FOREIGN KEY("id_proiontos") REFERENCES "FAGITO"("id_proiontos")
-	PRIMARY KEY("afm_ypallilou","id_proiontos")
+	FOREIGN KEY("id_fagitoy") REFERENCES "FAGITO"("id_fagitoy"),
+	PRIMARY KEY("afm_ypallilou","id_fagitoy")
 );
 """,
     """
 CREATE TABLE "APOTELEITAI" (
-	"id_proiontos"	integer NOT NULL,
+	"id_fagitoy" integer NOT NULL,
 	"id_ylikoy" integer NOT NULL,
-    FOREIGN KEY("id_proiontos") REFERENCES "FAGITO"("id_proiontos"),
+	"posotita" integer NOT NULL,
+    FOREIGN KEY("id_fagitoy") REFERENCES "FAGITO"("id_fagitoy"),
     FOREIGN KEY("id_ylikoy") REFERENCES "YLIKA"("id_ylikoy"),
-	PRIMARY KEY("id_proiontos","id_ylikoy")
+	PRIMARY KEY("id_fagitoy","id_ylikoy")
 );
 """,
     """
 
-CREATE TABLE "PERILAMBANEI" (
-	"id_paraggelias"	integer NOT NULL,
-	"id_proiontos"	integer NOT NULL,
-	FOREIGN KEY("id_paraggelias") REFERENCES "PARAGGELIA"("id_paraggelias"),
-	FOREIGN KEY("id_proiontos") REFERENCES "POTO"("id_proiontos"),
-	FOREIGN KEY("id_proiontos") REFERENCES "FAGITO"("id_proiontos")
-    PRIMARY KEY("id_paraggelias","id_proiontos")
+CREATE TABLE PERILAMBANEI (
+    "id_paraggelias" INTEGER NOT NULL,
+    "id_fagitoy" INTEGER,
+    "id_potoy" INTEGER,
+    "id_perilambanei" INTEGER PRIMARY KEY AUTOINCREMENT,
+    FOREIGN KEY ("id_paraggelias") REFERENCES PARAGGELIA("id_paraggelias"),
+    FOREIGN KEY ("id_potoy") REFERENCES POTO("id_potoy"),
+    FOREIGN KEY ("id_fagitoy") REFERENCES FAGITO("id_fagitoy")
 );
 """,
     """
@@ -164,11 +170,18 @@ CREATE TABLE "EFODIAZEI" (
     """
 CREATE TABLE "PROMITHEVEI" (
 	"afm"	integer NOT NULL,
-	"id_proiontos"	integer NOT NULL,
+	"id_potoy"	integer NOT NULL,
 	"imer_paradosis" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-	PRIMARY KEY("afm", "id_proiontos"),
+	PRIMARY KEY("afm", "id_potoy"),
     FOREIGN KEY("afm") REFERENCES "PROMITHEYTIS"("afm"),
-    FOREIGN KEY("id_proiontos") REFERENCES "POTO"("id_proiontos")
+    FOREIGN KEY("id_potoy") REFERENCES "POTO"("id_potoy")
+);
+""", """
+CREATE TABLE "KANEI" (
+	"id_pelati"	integer,
+	"id_kratisis"	integer NOT NULL,
+	FOREIGN KEY("id_pelati") REFERENCES "PELATIS"("id_pelati"),
+    FOREIGN KEY("id_kratisis") REFERENCES "KRATISI"("id_kratisis")
 );
 """,
 ]
