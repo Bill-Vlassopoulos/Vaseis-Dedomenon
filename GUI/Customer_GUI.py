@@ -248,12 +248,18 @@ class PelatisWindow(QWidget):
         self.people = QComboBox(self)
         self.date.addItems(self.load_dates())
         self.tables = QComboBox(self)
+        self.tables.activated.connect(self.people_numbers_limit)
+        self.tables.addItems(self.gettables())
+        self.ora_afixis = QComboBox(self)
+        self.ora_afixis.addItems(self.gettimes())
         vbox.addWidget(QLabel("Επιλέξτε Ημερομηνία:"))
         vbox.addWidget(self.date)
         vbox.addWidget(QLabel("Επιλέξτε Τραπέζι:"))
         vbox.addWidget(self.tables)
         vbox.addWidget(QLabel("Επιλέξτε Αριθμό Ατόμων:"))
         vbox.addWidget(self.people)
+        vbox.addWidget(QLabel("Επιλέξτε Ώρα άφιξης:"))
+        vbox.addWidget(self.ora_afixis)
         vbox.addStretch()
         self.kratisi_btn = QPushButton("Κάνε Κράτηση")
         vbox.addWidget(self.kratisi_btn)
@@ -332,6 +338,39 @@ class PelatisWindow(QWidget):
         except Exception as e:
             print("Error " + str(e))
         self.textedit.setText("")
+
+    def gettables(self):
+        query = "SELECT id_trapeziou FROM TRAPEZI"
+        cursor.execute(query)
+        results = cursor.fetchall()
+        list = [t[0] for t in results]
+        print(list)
+        return list
+
+    def people_numbers_limit(self):
+        query = "select aritmos_theseon from TRAPEZI where id_trapeziou='{}'".format(
+            self.tables.currentText()
+        )
+        cursor.execute(query)
+        results = cursor.fetchall()
+        self.people.clear()
+        for i in range(1, results[0][0] + 1):
+            self.people.addItem(str(i))
+
+    def gettimes(self):
+        return ["19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00"]
+
+    def ypovoli_kratisis(self):
+        cursor.execute(
+            """INSERT INTO KRATISI(imera_ora,aritmos_atomon,id_trapeziou) VALUES(?,?,?)
+""",
+            (
+                self.date.currentText() + " " + self.ora_afixis.currentText() + ":00",
+                int(self.people.currentText()),
+                self.tables.currentText(),
+            ),
+        )
+        conn.commit()
 
 
 def getdatetime():

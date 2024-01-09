@@ -17,20 +17,20 @@ CREATE TABLE "PELATIS"(
 );
 """,
     """
-CREATE TABLE "KRATISI"(
-    "id_kratisis"  INTEGER PRIMARY KEY AUTOINCREMENT,
-    "imera_ora" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-    "aritmos_atomon" INTEGER
-);
-""",
-    """
 CREATE TABLE "TRAPEZI"(
     "id_trapeziou" varchar(10) NOT NULL UNIQUE,
     "thesi" varchar(20),
     "aritmos_theseon" INTEGER NOT NULL CHECK("aritmos_theseon">0),
-    "id_kratisis" INTEGER,
-    FOREIGN KEY("id_kratisis") REFERENCES "KRATISI"("id_kratisis"),
     PRIMARY KEY("id_trapeziou")
+);
+""",
+    """
+CREATE TABLE "KRATISI"(
+    "id_kratisis"  INTEGER PRIMARY KEY AUTOINCREMENT,
+    "imera_ora" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    "aritmos_atomon" INTEGER,
+    "id_trapeziou" varchar(10) NOT NULL,
+    FOREIGN KEY("id_trapeziou") REFERENCES "TRAPEZI"("id_trapeziou")
 );
 """,
     """
