@@ -17,6 +17,8 @@ def print_all_from_pinaka(name):
 def tuple_to_list(list):
     return [item[0] for item in list]  # [(1,), (2,), (3,), ... -> [1, 2, 3, ...
 
+def getdatetime():
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # checks if username and password are valid
 def check_user(myusername, mypassword):
@@ -61,6 +63,7 @@ def kratisi_for_day(daytime):
 
     return counter, mylist  # returns number of kratisis + the tuple imera+ora of kratisis for a given day
 
+
 def get_all_food():
     query = "SELECT onoma FROM FAGITO"
     cursor.execute(query)
@@ -74,11 +77,10 @@ def get_all_drinks():
     results = cursor.fetchall()
     return [t[0] for t in results]
 
+
 def get_all_trapezia():
-    query = "SELECT id_trapeziou FROM TRAPEZI"
-    cursor.execute(query)
-    results = cursor.fetchall()
-    return [t[0] for t in results]
+    return ['a1', 'a2', 'a3', 'a4', 'a5', 'b1', 'b2', 'b3', 'b4', 'b5', 'c1', 'c2', 'c3', 'c4', 'c5']
+
 
 def get_id_from_yliko(name):
     query = "SELECT onoma, id_ylikoy FROM YLIKA"
@@ -88,19 +90,63 @@ def get_id_from_yliko(name):
         if row[0] == name:
             return row[1]
 
-def insert_paraggelia(id_trapeziou, id_ylikoy, id_potoy):
+def insert_kratisi(id_pelati, imera_ora, arithmos_atomon):
+
     cursor.execute('''
-            INSERT INTO PERILAMBANEI (NULL, imer_ora, kostos, id_trapeziou)
+        INSERT INTO KRATISI(id_kratisis, imera_ora, arithmos_atomon)
+        VALUES(NULL,?,?)
+    ''', (imera_ora, arithmos_atomon))
+    conn.commit()
+
+    cursor.execute('''
+        SELECT id_kratisis
+        FROM KRATISI
+        ORDER BY id_kratisis DESC
+        LIMIT 1;
+    ''')
+    result = cursor.fetchone()
+    id_kratisis = result[0]
+    cursor.execute('''
+        INSERT INTO KANEI(id_pelati, id_kratisis)
+        VALUES(?,?)
+            ''', (id_pelati, id_kratisis))
+    conn.commit()
+
+
+
+
+def insert_fagito_to_perilambanei(id_paraggelias, id_fagitoy=None, id_potoy=None):
+    cursor.execute('''
+            INSERT INTO PERILAMBANEI (id_paraggelias, id_fagitoy, NULL, NULL)
             VALUES (?, ?, ?, ?)
-        ''', id_trapeziou, id_ylikoy, id_potoy)
+        ''', id_paraggelias, id_fagitoy, id_potoy)
+    conn.commit()
+
+def calculate_kostos():
+    pass
+
+def free_tables():
+    all_tables = get_all_trapezia()
+    query = "SELECT id_kratisis FROM TRAPEZI"
+    cursor.execute(query)
+    results = cursor.fetchall()
+    for row in results:
+        print(row)
+
+
+def insert_paraggelia(id_trapeziou, id_ylikoy, id_potoy):
+    cursor.execute(
+    """
+        SELECT PERILAMBANEI.id_paraggelias
+        FROM PERILAMBANEI id_paraggelias
+        INNER JOIN PARRAGELIA id_paraggelias ON PERILAMBANEI.id_paraggelias = PARAGGELIA.id_paraggelias
+    """,
+    result = cursor.fetchall()
+    )
     cursor.execute('''
         INSERT INTO PARAGGELIA (NULL, imer_ora, kostos, id_trapeziou)
         VALUES (?, ?, ?, ?)
-    ''', id_trapeziou, id_ylikoy, id_potoy)
-
-
-def getdatetime():
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    ''', getdatetime(), id_trapeziou, id_ylikoy, id_potoy)
 
 
 # de douleuei
