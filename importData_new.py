@@ -5,8 +5,8 @@ cursor = conn.cursor()
 
 tables = {
     "PELATIS": 6,
-    "KRATISI": 2,
-    "TRAPEZI": 4,
+    "KRATISI": 3,
+    "TRAPEZI": 3,
     "KRITIKI": 4,
     "PARAGGELIA": 3,
     "MAGEIRAS": 6,
@@ -33,7 +33,7 @@ def insert_data(tablename, data):
     try:
         num_columns = tables[tablename]
         placeholders = ",".join(["?" for _ in range(num_columns)])
-        cursor.execute("PRAGMA table_info({});".format(tablename));
+        cursor.execute("PRAGMA table_info({});".format(tablename))
         if num_columns != len(cursor.fetchall()):
             insert_query = "INSERT INTO {} VALUES (NULL,{});".format(tablename, placeholders)
 
