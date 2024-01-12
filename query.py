@@ -50,22 +50,6 @@ def insert_kritiki(bathmologia, perigrafi, id_pelati):
         print("Error " + str(e))
 
 
-# return kratisis for a given day
-# Sto gui make sure days form 1-9 are given in 01-09 form
-def kratisi_for_day(daytime):
-    mylist = []
-    query = "SELECT id_kratisis, imera_ora FROM KRATISI"
-    cursor.execute(query)
-    results = cursor.fetchall()
-    for row in results:
-        if daytime == (row[1])[8:10]:
-            mylist.append(row)
-    counter = len(mylist)
-    conn.close()
-
-    return counter, mylist  # returns number of kratisis + the tuple imera+ora of kratisis for a given day
-
-
 def get_all_food():
     query = "SELECT onoma FROM FAGITO"
     cursor.execute(query)
@@ -108,6 +92,20 @@ def get_id_from_poto(name):
         print("Error " + str(e))
 
 
+def get_onoma_from_id_fagitoy(id_fagitoy):
+    cursor.execute('''
+        SELECT onoma FROM FAGITO WHERE id_fagitoy = ?
+    ''', (id_fagitoy,))
+    return cursor.fetchone()[0]
+
+
+def get_onoma_from_id_potoy(id_potoy):
+    cursor.execute('''
+        SELECT onoma FROM POTO WHERE id_potoy = ?
+    ''', (id_potoy,))
+    return cursor.fetchone()[0]
+
+
 def get_id_from_yliko(name):
     query = "SELECT onoma, id_ylikoy FROM YLIKA"
     cursor.execute(query)
@@ -115,6 +113,28 @@ def get_id_from_yliko(name):
     for row in results:
         if row[0] == name:
             return row[1]
+
+
+# enter date+ time, get tables that are free for that time
+def free_tables(date, time):
+    free_table_list = get_all_tables()
+    date_time = date + " " + time
+    cursor.execute(
+        '''
+        SELECT id_trapeziou, imera_ora FROM KRATISI
+        '''
+    )
+    results = cursor.fetchall()
+
+    for row in results:
+        if date_time == (row[1])[8:]:
+            if row[0] in free_table_list:
+                try:
+                    free_table_list.remove(row[0])
+                except:
+                    pass
+
+    return free_table_list
 
 
 def insert_kratisi(id_pelati, imera_ora, arithmos_atomon, id_trapeziou):
@@ -140,7 +160,8 @@ def insert_kratisi(id_pelati, imera_ora, arithmos_atomon, id_trapeziou):
 
 
 # ta dedomena auta ta trexeis mia fora mono:)
-'''insert_kratisi("1", "2024-01-01 20:00:00", "4", "a1")
+'''
+insert_kratisi("1", "2024-01-01 20:00:00", "4", "a1")
 insert_kratisi("2", "2024-01-01 20:00:00", "3", "a2")
 insert_kratisi("3", "2024-01-01 21:00:00", "4", "a3")
 insert_kratisi("4", "2024-01-01 21:00:00", "2", "a4")
@@ -148,37 +169,23 @@ insert_kratisi("7", "2024-01-02 20:00:00", "4", "a1")
 insert_kratisi("8", "2024-01-02 20:00:00", "4", "b1")
 insert_kratisi("10", "2024-01-02 20:00:00", "3", "b2")
 insert_kratisi("12", "2024-01-02 21:00:00", "4", "b3")
-insert_kratisi("1", "2024-02-01 20:00:00", "4", "a1")'''
+insert_kratisi("1", "2024-02-01 20:00:00", "4", "a1")
+'''
 
 
-def insert_proion_to_perilambanei(id_paraggelias, id_fagitoy=None, id_potoy=None):
-    cursor.execute('''
-            INSERT INTO PERILAMBANEI (id_paraggelias, id_fagitoy, id_potoy, id_perilambanei)
-            VALUES (?, ?, ?, NULL)
-        ''', (id_paraggelias, id_fagitoy, id_potoy))
-    conn.commit()
-
-
-# enter date+ time, get tables that are free for that time
-def free_tables(date, time):
-    free_table_list = get_all_tables()
-    date_time = date + " " + time
-    cursor.execute(
-        '''
-        SELECT id_trapeziou, imera_ora FROM KRATISI
-        '''
-    )
+# return kratisis for a given day
+# Sto gui make sure days form 1-9 are given in 01-09 form
+def kratisi_for_day(daytime):
+    mylist = []
+    query = "SELECT id_kratisis, imera_ora FROM KRATISI"
+    cursor.execute(query)
     results = cursor.fetchall()
-
     for row in results:
-        if date_time == (row[1])[8:]:
-            if row[0] in free_table_list:
-                try:
-                    free_table_list.remove(row[0])
-                except:
-                    pass
+        if daytime == (row[1])[8:10]:
+            mylist.append(row)
+    counter = len(mylist)
 
-    return free_table_list
+    return counter, mylist  # returns number of kratisis + the tuple imera+ora of kratisis for a given day
 
 
 def get_kratisi_from_pelati(id_pelati):
@@ -199,9 +206,41 @@ def get_kratisi_from_pelati(id_pelati):
     return results  # returns tuple (id_pelati, id_kratisi, imerominia kratisis > currentdatetime)
 
 
-def calculate_kostos(food, drinks):
+def delete_kratisi(id_pelati, id_kratisis):
+    try:
+        cursor.execute("DELETE FROM KANEI WHERE id_pelati = ? AND id_kratisis = ?", (id_pelati, id_kratisis))
+        cursor.execute("DELETE FROM KRATISI WHERE id_kratisis = ?", (id_kratisis))
+        conn.commit()
+        print("Row deleted successfully")
+    except sqlite3.Error as e:
+        print(f"Error deleting row: {e}")
+
+    conn.commit()
+
+
+def insert_proion_to_perilambanei(id_paraggelias, id_fagitoy=None, id_potoy=None):
+    cursor.execute('''
+            INSERT INTO PERILAMBANEI (id_paraggelias, id_fagitoy, id_potoy, id_perilambanei)
+            VALUES (?, ?, ?, NULL)
+        ''', (id_paraggelias, id_fagitoy, id_potoy))
+    conn.commit()
+
+
+def calculate_kostos(id_paraggelias):
     kostos = 0
+    cursor.execute('''
+        SELECT id_fagitoy from PERILAMBANEI WHERE id_paraggelias = ?
+    ''', (id_paraggelias,))
+    food = tuple_to_list(cursor.fetchall())
+    food = [item for item in food if item is not None]
+    cursor.execute('''
+            SELECT id_potoy from PERILAMBANEI WHERE id_paraggelias = ?
+        ''', (id_paraggelias,))
+    drinks = tuple_to_list(cursor.fetchall())
+    drinks = [item for item in drinks if item is not None]
+
     for item in food:
+        item = get_onoma_from_id_fagitoy(item)
         cursor.execute('''
             SELECT kostos from FAGITO
             WHERE onoma = ?
@@ -211,6 +250,7 @@ def calculate_kostos(food, drinks):
             kostos += float(result[0])
 
     for item in drinks:
+        item = get_onoma_from_id_potoy(item)
         cursor.execute('''
             SELECT kostos from POTO
             WHERE onoma = ?
@@ -222,21 +262,69 @@ def calculate_kostos(food, drinks):
     return str(kostos)
 
 
-calculate_kostos(["Greek salad", "Fries"], ["Iced Tea", "Water"])
+def insert_into_paraggelia(id_paraggelias, newfoods = None, newdrinks = None):
+    if newfoods != None:
+        for item in newfoods:
+            insert_proion_to_perilambanei(id_paraggelias, get_id_from_fagito(item), None)
+    if newdrinks != None:
+        for item in newdrinks:
+            insert_proion_to_perilambanei(id_paraggelias, None, get_id_from_poto(item))
 
 
 def insert_paraggelia(id_trapeziou, food, drinks):
-    kostos = calculate_kostos(food, drinks)
     imer_ora = getdatetime()
     cursor.execute('''
         INSERT INTO PARAGGELIA (id_paraggelias, imer_ora, kostos, id_trapeziou)
         VALUES (NULL, ?, ?, ?)
-    ''', (imer_ora, kostos, id_trapeziou))
+    ''', (imer_ora, None, id_trapeziou))
     conn.commit()
     id_paraggelias = cursor.lastrowid
-    for item in food:
-        insert_proion_to_perilambanei(id_paraggelias, get_id_from_fagito(item))
-    for item in drinks:
-        insert_proion_to_perilambanei(id_paraggelias, None, get_id_from_poto(item))
+    insert_into_paraggelia(id_paraggelias, food, drinks)
 
 
+def get_id_paraggelias_from_trapezi(id_trapeziou):
+    cursor.execute('''
+        SELECT id_paraggelias from PARAGGELIA WHERE id_trapeziou = ?
+    ''', (id_trapeziou,))
+    return (cursor.fetchone())[0]
+
+
+def delete_paraggelia(id_paraggelias):
+    try:
+        cursor.execute("DELETE FROM PARAGGELIA WHERE id_paraggelias = ? ", (id_paraggelias,))
+        cursor.execute("DELETE FROM PERILAMBANEI WHERE id_paraggelias = ?", (id_paraggelias,))
+        conn.commit()
+        print("Row deleted successfully")
+    except sqlite3.Error as e:
+        print(f"Error deleting row: {e}")
+
+    conn.commit()
+
+
+# την καλεις οταν εχει τελειωσει η παραγγελια (αφου εχει γινει τυχον update)
+def set_kostos_in_paraggelia(id_paraggelias):
+    cursor.execute('''
+        UPDATE PARAGGELIA SET kostos = ? WHERE id_paraggelias = ?
+    ''', (calculate_kostos(id_paraggelias), id_paraggelias))
+    conn.commit()
+
+
+def delete_proion_from_perilambanei(id_paraggelias, id_fagitoy=None, id_potoy=None):
+    try:
+        cursor.execute('''
+                DELETE FROM PERILAMBANEI WHERE id_paraggelias = ? AND id_fagitoy = ? AND id_potoy = ?
+            ''', (id_paraggelias, id_fagitoy, id_potoy))
+        conn.commit()
+    except Exception as e:
+        print("Error: " + str(e))
+
+
+def remove_from_paraggelia(id_paraggelias, delfoods = None, deldrinks = None):
+    if delfoods !=None:
+        for item in delfoods:
+            delete_proion_from_perilambanei(id_paraggelias, get_id_from_fagito(item))
+    if deldrinks!= None:
+        for item in deldrinks:
+            delete_proion_from_perilambanei(id_paraggelias, None, get_id_from_poto(item))
+
+remove_from_paraggelia("14", ["Fries"])
