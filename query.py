@@ -339,3 +339,18 @@ def get_kratiseis():
     ''',(getdatetime(),))
     result = cursor.fetchall()
     return result
+
+def get_fagito_poto_from_paraggelia(id_paraggelias):
+    cursor.execute('''
+        SELECT onoma FROM FAGITO
+        JOIN PERILAMBANEI ON FAGITO.id_fagitoy = PERILAMBANEI.id_fagitoy 
+        WHERE id_paraggelias = ?
+    ''', (id_paraggelias,))
+    fagito = cursor.fetchall()
+    cursor.execute('''
+            SELECT onoma FROM POTO
+            JOIN PERILAMBANEI ON POTO.id_potoy = PERILAMBANEI.id_potoy 
+            WHERE id_paraggelias = ?
+        ''', (id_paraggelias,))
+    poto = cursor.fetchall()
+    return fagito, poto
