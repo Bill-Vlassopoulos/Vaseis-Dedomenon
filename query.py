@@ -328,3 +328,14 @@ def remove_from_paraggelia(id_paraggelias, delfoods = None, deldrinks = None):
             delete_proion_from_perilambanei(id_paraggelias, None, get_id_from_poto(item))
 
 remove_from_paraggelia("14", ["Fries"])
+
+def get_kratiseis():
+    cursor.execute('''
+        SELECT KRATISI.id_kratisis, KRATISI.imera_ora, KRATISI.arithmos_atomon, PELATIS.onoma, PELATIS.eponimo
+        FROM PELATIS
+        JOIN KANEI ON PELATIS.id_pelati = KANEI.id_pelati
+        JOIN KRATISI ON KRATISI.id_kratisis = KANEI.id_kratisis
+        WHERE KRATISI.imera_ora > ?
+    ''',(getdatetime(),))
+    result = cursor.fetchall()
+    return result
