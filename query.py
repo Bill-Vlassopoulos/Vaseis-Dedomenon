@@ -115,10 +115,9 @@ def get_id_from_yliko(name):
             return row[1]
 
 
-# enter date+ time, get tables that are free for that time
-def free_tables(date, time):
+def free_tables(date):
     free_table_list = get_all_tables()
-    date_time = date + " " + time
+    date_time = date
     cursor.execute(
         '''
         SELECT id_trapeziou, imera_ora FROM KRATISI
@@ -127,7 +126,7 @@ def free_tables(date, time):
     results = cursor.fetchall()
 
     for row in results:
-        if date_time == (row[1])[8:]:
+        if date_time == (row[1])[8:10]:
             if row[0] in free_table_list:
                 try:
                     free_table_list.remove(row[0])
