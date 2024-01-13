@@ -254,8 +254,9 @@ class PelatisWindow(QWidget):
         self.people = QComboBox(self)
         self.date.addItems(self.load_dates())
         self.tables = QComboBox(self)
+        self.date.activated.connect(self.free_tables)
         self.tables.activated.connect(self.people_numbers_limit)
-        self.tables.addItems(self.gettables())
+
         self.ora_afixis = QComboBox(self)
         self.ora_afixis.addItems(self.gettimes())
         vbox.addWidget(QLabel("Επιλέξτε Ημερομηνία:"))
@@ -304,6 +305,7 @@ class PelatisWindow(QWidget):
         self.kratiseis_table.setHorizontalHeaderLabels(
             ["Τραπέζι", "Ημερομηνία-Ώρα", "Άτομα"]
         )
+        self.get_kratiseis()
         self.delete_btn = QPushButton("Διαγραφή")
         self.delete_btn.clicked.connect(self.delete_kratisi)
         kratiseis_hbox.addWidget(self.kratiseis_table)
@@ -352,6 +354,23 @@ class PelatisWindow(QWidget):
         results = cursor.fetchall()
         list = [t[0] for t in results]
         return list
+
+    def free_tables(self):
+        cursor.execute(
+            """
+            SELECT id_trapeziou
+            FROM TRAPEZI
+            WHERE id_trapeziou NOT IN (SELECT id_trapeziou
+						            FROM KRATISI
+						            WHERE imera_ora like "{}%")
+            """.format(
+                self.date.currentText()
+            )
+        )
+        results = cursor.fetchall()
+        list = [t[0] for t in results]
+        self.tables.clear()
+        self.tables.addItems(list)
 
     def people_numbers_limit(self):
         query = "select aritmos_theseon from TRAPEZI where id_trapeziou='{}'".format(

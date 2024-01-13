@@ -597,7 +597,8 @@ class Kratiseis(QWidget):
         self.people = QComboBox(self)
         self.date.addItems(self.load_dates())
         self.tables = QComboBox(self)
-        self.tables.addItems(self.gettables())
+        self.date.activated.connect(self.free_tables)
+
         self.tables.activated.connect(self.people_numbers_limit)
         self.name = QLineEdit()
         self.surname = QLineEdit()
@@ -769,6 +770,23 @@ class Kratiseis(QWidget):
 
     def gettimes(self):
         return ["19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00"]
+
+    def free_tables(self):
+        cursor.execute(
+            """
+            SELECT id_trapeziou
+            FROM TRAPEZI
+            WHERE id_trapeziou NOT IN (SELECT id_trapeziou
+						            FROM KRATISI
+						            WHERE imera_ora like "{}%")
+            """.format(
+                self.date.currentText()
+            )
+        )
+        results = cursor.fetchall()
+        list = [t[0] for t in results]
+        self.tables.clear()
+        self.tables.addItems(list)
 
 
 def getdatetime():
