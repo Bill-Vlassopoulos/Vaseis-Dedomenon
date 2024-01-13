@@ -476,12 +476,43 @@ def top5_pelatis_names():
         print(f"Name: {item[0]} {item[1]}, Number of reservations: {item[2]}")
 
 
+def top5_drinks():
+    drinks = []
+    cursor.execute('''
+    SELECT id_potoy, COUNT(id_potoy) AS occurrence_count
+    FROM PERILAMBANEI
+    GROUP BY id_potoy
+    ORDER BY occurrence_count DESC
+    LIMIT 5;
+    ''')
+    results = tuple_to_list(cursor.fetchall())
+    for item in results:
+        drinks.append(get_onoma_from_id_potoy(item))
+    return drinks
+
+
+def top5_foods():
+    foods = []
+    cursor.execute('''
+        SELECT id_fagitoy, COUNT(id_fagitoy) AS occurrence_count
+        FROM PERILAMBANEI
+        GROUP BY id_fagitoy
+        ORDER BY occurrence_count DESC
+        LIMIT 5;
+        ''')
+    results = tuple_to_list(cursor.fetchall())
+    for item in results:
+        foods.append(get_onoma_from_id_fagitoy(item))
+    return foods
+
+
 def add_new_food(onoma, kostos, syntagi):
     cursor.execute('''
             INSERT INTO FAGITO (id_fagitoy, onoma, kostos, posotita, syntagi)
             VALUES (NULL, ?, ?, ?)
         ''', (onoma, kostos, "10", syntagi,))
     conn.commit()
+
 
 def add_new_poto(onoma, kostos):
     cursor.execute('''
@@ -490,25 +521,17 @@ def add_new_poto(onoma, kostos):
             ''', (onoma, kostos, "10",))
     conn.commit()
 
+
 def add_new_table(id_trapeziou, thesi, arithmos_theseon):
     cursor.execute('''
                 INSERT INTO TRAPEZI (id_trapeziou, thesi, arithmos_theseon)
                 VALUES (?, ?, ?)
             ''', (id_trapeziou, thesi, arithmos_theseon,))
     conn.commit()
- 
 
+insert_paraggelia("a2", ["Fries"], ["Water"])
+insert_paraggelia("a3", ["Bolognese","Bolognese, Bolognese"], [])
 
-def top5_drinks():
-    pass
-
-def top5_foods():
-    pass
-
-def add_new_food(foodname):
-    cursor.excute('''
-        
-    ''')
 '''
 def top10_biggest_spenders():
     cursor.execute(
