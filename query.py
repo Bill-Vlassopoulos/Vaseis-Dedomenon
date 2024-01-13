@@ -476,6 +476,29 @@ def top5_pelatis_names():
         print(f"Name: {item[0]} {item[1]}, Number of reservations: {item[2]}")
 
 
+def add_new_food(onoma, kostos, syntagi):
+    cursor.execute('''
+            INSERT INTO FAGITO (id_fagitoy, onoma, kostos, posotita, syntagi)
+            VALUES (NULL, ?, ?, ?)
+        ''', (onoma, kostos, "10", syntagi,))
+    conn.commit()
+
+def add_new_poto(onoma, kostos):
+    cursor.execute('''
+                INSERT INTO POTO (id_potoy, onoma, kostos, posotita)
+                VALUES (NULL, ?, ?)
+            ''', (onoma, kostos, "10",))
+    conn.commit()
+
+def add_new_table(id_trapeziou, thesi, arithmos_theseon):
+    cursor.execute('''
+                INSERT INTO TRAPEZI (id_trapeziou, thesi, arithmos_theseon)
+                VALUES (?, ?, ?)
+            ''', (id_trapeziou, thesi, arithmos_theseon,))
+    conn.commit()
+ 
+
+
 def top5_drinks():
     pass
 
