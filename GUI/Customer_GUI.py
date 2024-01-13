@@ -227,6 +227,12 @@ class PelatisWindow(QWidget):
     def __init__(self, username, password):
         self.username = username
         self.password = password
+        query = "select id_pelati from PELATIS where username='{}' and password='{}'".format(
+            self.username, self.password
+        )
+        cursor.execute(query)
+        results = cursor.fetchall()
+        self.id_pelati = results[0][0]
         # self.id_pelati = id_pelati
         super(PelatisWindow, self).__init__()
         self.setWindowTitle("Estiatorio")
@@ -262,6 +268,7 @@ class PelatisWindow(QWidget):
         vbox.addWidget(self.ora_afixis)
         vbox.addStretch()
         self.kratisi_btn = QPushButton("Κάνε Κράτηση")
+        self.kratisi_btn.clicked.connect(self.ypovoli_kratisis)
         vbox.addWidget(self.kratisi_btn)
         self.kratisi.setLayout(vbox)
         self.kratisi_tab.addTab(self.kratisi, "Κράτηση")
@@ -293,14 +300,14 @@ class PelatisWindow(QWidget):
         self.kratiseis_tab = QTabWidget()
 
         self.kratiseis_table = QTableWidget()
-        self.kratiseis_table.setRowCount(3)
         self.kratiseis_table.setColumnCount(3)
         self.kratiseis_table.setHorizontalHeaderLabels(
-            ["Ημερομηνία", "Τραπέζι", "Άτομα"]
+            ["Τραπέζι", "Ημερομηνία-Ώρα", "Άτομα"]
         )
-
+        self.delete_btn = QPushButton("Διαγραφή")
+        self.delete_btn.clicked.connect(self.delete_kratisi)
         kratiseis_hbox.addWidget(self.kratiseis_table)
-        kratiseis_hbox.addWidget(QPushButton("Διαγραφή"))
+        kratiseis_hbox.addWidget(self.delete_btn)
         self.kratiseis.setLayout(kratiseis_hbox)
         self.kratiseis_tab.addTab(self.kratiseis, "Κρατήσεις")
 
@@ -344,7 +351,6 @@ class PelatisWindow(QWidget):
         cursor.execute(query)
         results = cursor.fetchall()
         list = [t[0] for t in results]
-        print(list)
         return list
 
     def people_numbers_limit(self):
@@ -371,6 +377,100 @@ class PelatisWindow(QWidget):
             ),
         )
         conn.commit()
+
+        cursor.execute(
+            """
+        SELECT id_kratisis
+        FROM KRATISI
+        ORDER BY id_kratisis DESC
+        LIMIT 1;
+    """
+        )
+        result = cursor.fetchone()
+        id_kratisis = result[0]
+        cursor.execute(
+            """
+            INSERT INTO KANEI(id_pelati, id_kratisis)
+            VALUES(?,?)
+                """,
+            (self.id_pelati, id_kratisis),
+        )
+        conn.commit()
+
+        self.kratiseis_table.clearContents()
+        self.kratiseis_table.setRowCount(0)
+
+        query = "select id_trapeziou,imera_ora,aritmos_atomon from KRATISI where id_kratisis in (select id_kratisis from KANEI where id_pelati={})".format(
+            self.id_pelati
+        )
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+        # Ορίστε τον αριθμό των γραμμών του πίνακα
+        self.kratiseis_table.setRowCount(len(results))
+
+        for row_index, row_data in enumerate(results):
+            id_trapeziou, imera_ora, aritmos_atomon = row_data
+
+            # Προσθέστε τα δεδομένα σε κάθε κελί του πίνακα
+            self.kratiseis_table.setItem(
+                row_index, 0, QTableWidgetItem(str(id_trapeziou))
+            )
+            self.kratiseis_table.setItem(row_index, 1, QTableWidgetItem(str(imera_ora)))
+            self.kratiseis_table.setItem(
+                row_index, 2, QTableWidgetItem(str(aritmos_atomon))
+            )
+
+    def get_kratiseis(self):
+        self.kratiseis_table.clearContents()
+        self.kratiseis_table.setRowCount(0)
+
+        query = "select id_trapeziou,imera_ora,aritmos_atomon from KRATISI where id_kratisis in (select id_kratisis from KANEI where id_pelati={})".format(
+            self.id_pelati
+        )
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+        # Ορίστε τον αριθμό των γραμμών του πίνακα
+        self.kratiseis_table.setRowCount(len(results))
+
+        for row_index, row_data in enumerate(results):
+            id_trapeziou, imera_ora, aritmos_atomon = row_data
+
+            # Προσθέστε τα δεδομένα σε κάθε κελί του πίνακα
+            self.kratiseis_table.setItem(
+                row_index, 0, QTableWidgetItem(str(id_trapeziou))
+            )
+            self.kratiseis_table.setItem(row_index, 1, QTableWidgetItem(str(imera_ora)))
+            self.kratiseis_table.setItem(
+                row_index, 2, QTableWidgetItem(str(aritmos_atomon))
+            )
+
+    def delete_kratisi(self):
+        selected_row = self.kratiseis_table.currentRow()
+        if selected_row >= 0:
+            # Ανακτήστε τα δεδομένα της επιλεγμένης γραμμής
+            id_trapeziou = self.kratiseis_table.item(selected_row, 0).text()
+            imera_ora = self.kratiseis_table.item(selected_row, 1).text()
+            aritmos_atomon = self.kratiseis_table.item(selected_row, 2).text()
+
+            # Εδώ μπορείτε να προσθέσετε τον κώδικα για τη διαγραφή της επιλεγμένης γραμμής από τη βάση δεδομένων
+            query = "select id_kratisis from kratisi where id_trapeziou='{}' AND imera_ora='{}' AND aritmos_atomon={}".format(
+                id_trapeziou, imera_ora, aritmos_atomon
+            )
+            cursor.execute(query)
+            results = cursor.fetchall()
+            id_kratisis = results[0][0]
+
+            query = "delete from KANEI where id_kratisis={}".format(id_kratisis)
+            cursor.execute(query)
+            conn.commit()
+
+            query = "delete from KRATISI where id_kratisis={}".format(id_kratisis)
+            cursor.execute(query)
+            conn.commit()
+            # Ενημερώστε τον πίνακα εκ νέου
+            self.get_kratiseis()
 
 
 def getdatetime():

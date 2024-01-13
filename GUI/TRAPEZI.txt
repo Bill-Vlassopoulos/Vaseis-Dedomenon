@@ -1,0 +1,15 @@
+a1, kipos, 5
+a2, kipos, 3
+a3, kipos, 2
+a4, kipos, 6
+a5, kipos, 4
+b1, rooftop, 2
+b2, rooftop, 5
+b3, rooftop, 4
+b4, rooftop, 6
+b5, rooftop, 3 
+c1, esoterika, 4 
+c2, esoterika, 2 
+c3, esoterika, 6 
+c4, esoterika, 3 
+c5, esoterika, 5 

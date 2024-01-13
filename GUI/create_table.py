@@ -48,7 +48,7 @@ CREATE TABLE "KRITIKI"(
 CREATE TABLE "PARAGGELIA"(
     "id_paraggelias" INTEGER NOT NULL UNIQUE ,
     "imer_ora" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-    "kostos" REAL CHECK("kostos">0),
+    "kostos" REAL,
     "id_trapeziou" INTEGER NOT NULL,
     FOREIGN KEY("id_trapeziou") REFERENCES "TRAPEZI"("id_trapeziou"),
     PRIMARY KEY("id_paraggelias" AUTOINCREMENT)
@@ -100,7 +100,7 @@ CREATE TABLE "FAGITO" (
 	"id_fagitoy" INTEGER NOT NULL UNIQUE ,
 	"onoma" VARCHAR(30) NOT NULL,
 	"kostos" REAL NOT NULL,
-	"diathesimothta" INTEGER NOT NULL CHECK ("diathesimothta" >= 0),
+	"posotita" INTEGER,
 	"syntagi" varchar(500) NOT NULL,
     PRIMARY KEY("id_fagitoy" AUTOINCREMENT)
 );
@@ -109,8 +109,8 @@ CREATE TABLE "FAGITO" (
 CREATE TABLE "POTO" (
 	"id_potoy" INTEGER NOT NULL UNIQUE ,
 	"onoma" VARCHAR(30) NOT NULL,
-	"kostos" REAL NOT NULL CHECK(kostos>0.0),
-	"diathesimothta" INTEGER NOT NULL CHECK ("diathesimothta" >= 0),
+	"kostos" REAL ,
+	"posotita" INTEGER,
 	PRIMARY KEY("id_potoy" AUTOINCREMENT)
 );
 """,
@@ -137,8 +137,8 @@ CREATE TABLE "APOTELEITAI" (
 
 CREATE TABLE PERILAMBANEI (
     "id_paraggelias" INTEGER NOT NULL,
-    "id_fagitoy" INTEGER NOT NULL,
-    "id_potoy" INTEGER NOT NULL,
+    "id_fagitoy" INTEGER,
+    "id_potoy" INTEGER,
     "id_perilambanei" INTEGER PRIMARY KEY AUTOINCREMENT,
     FOREIGN KEY ("id_paraggelias") REFERENCES PARAGGELIA("id_paraggelias"),
     FOREIGN KEY ("id_potoy") REFERENCES POTO("id_potoy"),
@@ -174,11 +174,11 @@ CREATE TABLE "PROMITHEVEI" (
 );
 """,
     """
-CREATE TABLE "ANTISTOIXEI" (
-	"id_trapeziou" varchar(10),
+CREATE TABLE "KANEI" (
+	"id_pelati" INTEGER,
 	"id_kratisis"  INTEGER,
-	PRIMARY KEY("id_trapeziou", "id_kratisis"),
-    FOREIGN KEY("id_trapeziou") REFERENCES "TRAPEZI"("id_trapeziou"),
+	PRIMARY KEY("id_pelati", "id_kratisis"),
+    FOREIGN KEY("id_pelati") REFERENCES "TRAPEZI"("id_trapeziou"),
     FOREIGN KEY("id_kratisis") REFERENCES "KRATISI"("id_kratisis")
 );
 """,
