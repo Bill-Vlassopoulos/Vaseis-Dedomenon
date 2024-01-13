@@ -1,4 +1,5 @@
 import sqlite3
+import bcrypt
 from datetime import datetime
 
 # Connect to the SQLite database
@@ -22,24 +23,52 @@ def getdatetime():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-# checks if username and password are valid
+def hash_password(password):
+    # Hash a password using bcrypt
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    return hashed_password
+
+
+# Function to check if a candidate password matches a hashed password
+def check_password(candidate_password, hashed_password):
+    return bcrypt.checkpw(candidate_password.encode('utf-8'), hashed_password)
+
+
+# Function to check if the provided username and password are valid
 def check_user(myusername, mypassword):
-    query = "SELECT username, password FROM PELATIS"
-    cursor.execute(query)
+    query = "SELECT username, password FROM PELATIS WHERE username = ?"
+    cursor.execute(query, (myusername,))
+    result = cursor.fetchone()
+
+    if result:
+        stored_username = result[0]  # Assuming username is stored in the first column
+        stored_password_hash = result[1]  # Assuming password is stored in the second column
+        if stored_username == myusername and check_password(mypassword, stored_password_hash):
+            return 1  # Username and password are correct
+    return 0  # Username or password is incorrect
+
+
+def check_if_user_exists(username, email):
+    cursor.execute('''
+        SELECT username, email FROM PELATIS
+    ''')
     results = cursor.fetchall()
-    if (myusername, mypassword) in results:
-        return 1
-    else:
-        return 0
+    for item in results:
+        if item[0] == username:
+            return "Username is already used! Please try another username, or sign up if you already have an account."
+        elif item[1] == email:
+            return "Email is already used! Please try another email, or sign up if you already have an account."
 
 
 # insert new customer
 def insert_user(name, lastname, phone, mail, username=None, password=None):
     query = "INSERT INTO PELATIS (onoma, eponimo, tilefono, email, username, password) VALUES(?,?,?,?,?,?)"
-    cursor.execute(query, (name, lastname, phone, mail, username, password))
+    cursor.execute(query, (name, lastname, phone, mail, username, hash_password(password)))
     conn.commit()
 
 
+# insert_user("Nektaria", "Zevgoula", "6969696969", "nektaroazev@gmail.com", "nektar", "nektar12345")
+# print(check_user("nektar", "nektar145"))
 # inserts kritiki to database
 def insert_kritiki(bathmologia, perigrafi, id_pelati):
     try:
@@ -115,9 +144,10 @@ def get_id_from_yliko(name):
             return row[1]
 
 
-def free_tables(date):
+# enter date+ time, get tables that are free for that time
+def free_tables(date, time):
     free_table_list = get_all_tables()
-    date_time = date
+    date_time = date + " " + time
     cursor.execute(
         '''
         SELECT id_trapeziou, imera_ora FROM KRATISI
@@ -126,7 +156,7 @@ def free_tables(date):
     results = cursor.fetchall()
 
     for row in results:
-        if date_time == (row[1])[8:10]:
+        if date_time == (row[1])[8:]:
             if row[0] in free_table_list:
                 try:
                     free_table_list.remove(row[0])
@@ -159,8 +189,7 @@ def insert_kratisi(id_pelati, imera_ora, arithmos_atomon, id_trapeziou):
 
 
 # ta dedomena auta ta trexeis mia fora mono:)
-'''
-insert_kratisi("1", "2024-01-01 20:00:00", "4", "a1")
+'''insert_kratisi("1", "2024-01-01 20:00:00", "4", "a1")
 insert_kratisi("2", "2024-01-01 20:00:00", "3", "a2")
 insert_kratisi("3", "2024-01-01 21:00:00", "4", "a3")
 insert_kratisi("4", "2024-01-01 21:00:00", "2", "a4")
@@ -168,8 +197,7 @@ insert_kratisi("7", "2024-01-02 20:00:00", "4", "a1")
 insert_kratisi("8", "2024-01-02 20:00:00", "4", "b1")
 insert_kratisi("10", "2024-01-02 20:00:00", "3", "b2")
 insert_kratisi("12", "2024-01-02 21:00:00", "4", "b3")
-insert_kratisi("1", "2024-02-01 20:00:00", "4", "a1")
-'''
+insert_kratisi("1", "2024-02-01 20:00:00", "4", "a1")'''
 
 
 # return kratisis for a given day
@@ -261,13 +289,21 @@ def calculate_kostos(id_paraggelias):
     return str(kostos)
 
 
-def insert_into_paraggelia(id_paraggelias, newfoods = None, newdrinks = None):
+def set_kostos_in_paraggelia(id_paraggelias):
+    cursor.execute('''
+        UPDATE PARAGGELIA SET kostos = ? WHERE id_paraggelias = ?
+    ''', (calculate_kostos(id_paraggelias), id_paraggelias))
+    conn.commit()
+
+
+def insert_into_paraggelia(id_paraggelias, newfoods=None, newdrinks=None):
     if newfoods != None:
         for item in newfoods:
             insert_proion_to_perilambanei(id_paraggelias, get_id_from_fagito(item), None)
     if newdrinks != None:
         for item in newdrinks:
             insert_proion_to_perilambanei(id_paraggelias, None, get_id_from_poto(item))
+    set_kostos_in_paraggelia(id_paraggelias)
 
 
 def insert_paraggelia(id_trapeziou, food, drinks):
@@ -278,6 +314,7 @@ def insert_paraggelia(id_trapeziou, food, drinks):
     ''', (imer_ora, None, id_trapeziou))
     conn.commit()
     id_paraggelias = cursor.lastrowid
+    set_kostos_in_paraggelia(id_paraggelias)
     insert_into_paraggelia(id_paraggelias, food, drinks)
 
 
@@ -296,37 +333,60 @@ def delete_paraggelia(id_paraggelias):
         print("Row deleted successfully")
     except sqlite3.Error as e:
         print(f"Error deleting row: {e}")
-
-    conn.commit()
-
-
-# την καλεις οταν εχει τελειωσει η παραγγελια (αφου εχει γινει τυχον update)
-def set_kostos_in_paraggelia(id_paraggelias):
-    cursor.execute('''
-        UPDATE PARAGGELIA SET kostos = ? WHERE id_paraggelias = ?
-    ''', (calculate_kostos(id_paraggelias), id_paraggelias))
+    set_kostos_in_paraggelia(id_paraggelias)
     conn.commit()
 
 
 def delete_proion_from_perilambanei(id_paraggelias, id_fagitoy=None, id_potoy=None):
     try:
-        cursor.execute('''
-                DELETE FROM PERILAMBANEI WHERE id_paraggelias = ? AND id_fagitoy = ? AND id_potoy = ?
-            ''', (id_paraggelias, id_fagitoy, id_potoy))
-        conn.commit()
+        # Check and delete based on id_fagitoy
+        if id_fagitoy is not None:
+            cursor.execute('''
+                SELECT id_perilambanei
+                FROM PERILAMBANEI
+                WHERE id_paraggelias = ? AND id_fagitoy = ?
+                LIMIT 1
+            ''', (id_paraggelias, id_fagitoy))
+            row_to_delete = cursor.fetchone()
+
+            if row_to_delete:
+                cursor.execute('''
+                    DELETE FROM PERILAMBANEI
+                    WHERE id_perilambanei = ?
+                ''', (row_to_delete[0],))
+                conn.commit()
+
+        # Check and delete based on id_potoy
+        if id_potoy is not None:
+            cursor.execute('''
+                SELECT id_perilambanei
+                FROM PERILAMBANEI
+                WHERE id_paraggelias = ? AND id_potoy = ?
+                LIMIT 1
+            ''', (id_paraggelias, id_potoy))
+            row_to_delete = cursor.fetchone()
+
+            if row_to_delete:
+                cursor.execute('''
+                    DELETE FROM PERILAMBANEI
+                    WHERE id_perilambanei = ?
+                ''', (row_to_delete[0],))
+                conn.commit()
+
+        print("Row successfully deleted from PERILAMBANEI")
     except Exception as e:
         print("Error: " + str(e))
 
 
-def remove_from_paraggelia(id_paraggelias, delfoods = None, deldrinks = None):
-    if delfoods !=None:
-        for item in delfoods:
-            delete_proion_from_perilambanei(id_paraggelias, get_id_from_fagito(item))
-    if deldrinks!= None:
-        for item in deldrinks:
-            delete_proion_from_perilambanei(id_paraggelias, None, get_id_from_poto(item))
+def remove_from_paraggelia(id_paraggelias, delfoods=None, deldrinks=None):
+    for item in delfoods:
+        delete_proion_from_perilambanei(id_paraggelias, get_id_from_fagito(item))
+    for item in deldrinks:
+        delete_proion_from_perilambanei(id_paraggelias, None, get_id_from_poto(item))
 
-remove_from_paraggelia("14", ["Fries"])
+
+# remove_from_paraggelia("12", ["Fries"], ["Water"])
+
 
 def get_kratiseis():
     cursor.execute('''
@@ -335,9 +395,26 @@ def get_kratiseis():
         JOIN KANEI ON PELATIS.id_pelati = KANEI.id_pelati
         JOIN KRATISI ON KRATISI.id_kratisis = KANEI.id_kratisis
         WHERE KRATISI.imera_ora > ?
-    ''',(getdatetime(),))
+    ''', (getdatetime(),))
     result = cursor.fetchall()
     return result
+
+
+'''def get_fagito_poto_from_paraggelia(id_paraggelias):
+    food = []
+    drinks = []
+    cursor.execute(
+        SELECT id_fagitoy, id_potoy FROM PERILAMBANEI WHERE id_paraggelias = ?
+    , (id_paraggelias,))
+    results = cursor.fetchall()
+    for item in results:
+        if item[0] is not None:
+            food.append(get_onoma_from_id_fagitoy(item[0]))
+        if item[1] is not None:
+            drinks.append(get_onoma_from_id_potoy(item[1]))
+    
+    return food, drinks'''
+
 
 def get_fagito_poto_from_paraggelia(id_paraggelias):
     cursor.execute('''
@@ -353,3 +430,85 @@ def get_fagito_poto_from_paraggelia(id_paraggelias):
         ''', (id_paraggelias,))
     poto = cursor.fetchall()
     return fagito, poto
+
+
+def kerdi_for_day(day):
+    kerdi = 0
+    cursor.execute('''
+        SELECT kostos FROM PARAGGELIA
+        WHERE strftime('%Y-%m-%d', imer_ora) = ?
+    ''', (day,))
+    results = cursor.fetchall()
+    kerdi = sum(float(item[0]) for item in results if item[0] is not None)
+    return kerdi
+
+
+print(kerdi_for_day('2024-01-01'))
+
+
+def kerdi_for_month(month):
+    kerdi = 0
+    cursor.execute('''
+        SELECT kostos FROM PARAGGELIA
+        WHERE strftime('%Y-%m', imer_ora) = ?
+    ''', (month,))
+    results = cursor.fetchall()
+    kerdi = sum(float(item[0]) for item in results if item[0] is not None)
+    return kerdi
+
+
+print(kerdi_for_month('2024-01'))
+
+
+def top5_pelatis_names():
+    cursor.execute('''
+        SELECT PELATIS.onoma, PELATIS.eponimo, COUNT(KANEI.id_pelati) as pelatis_count
+        FROM PELATIS
+        JOIN KANEI ON PELATIS.id_pelati = KANEI.id_pelati
+        GROUP BY KANEI.id_pelati
+        ORDER BY pelatis_count DESC
+        LIMIT 10
+    ''')
+
+    results = cursor.fetchall()
+
+    for item in results:
+        print(f"Name: {item[0]} {item[1]}, Number of reservations: {item[2]}")
+
+
+def top5_drinks():
+    pass
+
+def top5_foods():
+    pass
+
+def add_new_food(foodname):
+    cursor.excute('''
+        
+    ''')
+'''
+def top10_biggest_spenders():
+    cursor.execute(
+        SELECT PELATIS.id_pelati, PELATIS.onoma, PELATIS.eponimo, SUM(PARAGGELIA.kostos) as total_spending
+        FROM PELATIS
+        JOIN KANEI ON PELATIS.id_pelati = KANEI.id_pelati
+        JOIN KRATISI ON KANEI.id_kratisis = KRATISI.id_kratisis
+        JOIN TRAPEZI ON KRATISI.id_trapeziou = TRAPEZI.id_trapeziou
+        JOIN PARAGGELIA ON KRATISI.id_trapeziou = PARAGGELIA.id_trapeziou
+        GROUP BY PELATIS.id_pelati
+        ORDER BY total_spending DESC
+        LIMIT 10
+    )
+
+    results = cursor.fetchall()
+
+    for item in results:
+        print(f"id_pelati: {item[0]}, Name: {item[1]} {item[2]}, Total Spending: {item[3]}")
+
+    conn.close()
+
+
+# Example usage
+top10_biggest_spenders()
+
+'''
