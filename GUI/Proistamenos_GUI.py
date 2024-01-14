@@ -14,7 +14,7 @@ cursor = conn.cursor()
 
 def main():
     app = QApplication(sys.argv)
-    window = Statistika()
+    window = MainWindow()
     window.show()
     app.exec()
 
@@ -26,13 +26,21 @@ class MainWindow(QWidget):
         self.setWindowTitle("Estiatorio")
         self.setGeometry(300, 300, 450, 450)
         self.setFixedSize(450, 300)
-        self.kratiseis_btn = QPushButton("Διαχείριση Καταστήματος")
-
+        self.kratiseis_btn = QPushButton("Διαχείριση Φαγητών-Ποτών")
+        self.kratiseis_btn.clicked.connect(self.open_diacheirisi)
         self.new_paraggelia_btn = QPushButton("Στατιστικά")
-
+        self.new_paraggelia_btn.clicked.connect(self.open_statistika)
         main_vbox.addWidget(self.kratiseis_btn)
         main_vbox.addWidget(self.new_paraggelia_btn)
         self.setLayout(main_vbox)
+
+    def open_diacheirisi(self):
+        self.win = Diacheirisi()
+        self.win.show()
+
+    def open_statistika(self):
+        self.win = Statistika()
+        self.win.show()
 
 
 class Diacheirisi(QWidget):
@@ -43,14 +51,22 @@ class Diacheirisi(QWidget):
         self.setGeometry(300, 300, 450, 450)
         self.setFixedSize(450, 450)
 
-        self.add_food_btn = QPushButton("Προσθήκη Φαγητού")
-        self.add_poto_btn = QPushButton("Προσθήκη Ποτού")
-        self.add_trapezi_btn = QPushButton("Προσθήκη Τραπέζι")
+        self.add_food_btn = QPushButton("Προσθήκη Φαγητού-Ποτού")
+        self.add_food_btn.clicked.connect(self.open_food_poto)
 
+        self.add_trapezi_btn = QPushButton("Προσθήκη Τραπέζι")
+        self.add_trapezi_btn.clicked.connect(self.open_trapezi)
         main_vbox.addWidget(self.add_food_btn)
-        main_vbox.addWidget(self.add_poto_btn)
         main_vbox.addWidget(self.add_trapezi_btn)
         self.setLayout(main_vbox)
+
+    def open_food_poto(self):
+        self.win = Food_Poto()
+        self.win.show()
+
+    def open_trapezi(self):
+        self.win = Trapezi()
+        self.win.show()
 
 
 class Trapezi(QWidget):
@@ -156,8 +172,10 @@ class Statistika(QWidget):
         main_vbox = QVBoxLayout()
         self.day_profit_line_edit = QLineEdit()
         self.month_profit_line_edit = QLineEdit()
-        top5_food = QLineEdit()
-        top5_drinks = QLineEdit()
+        self.top_food = QLineEdit()
+        self.most_popular_food()
+        self.top_drinks = QLineEdit()
+        self.most_popular_drink()
         self.get_month_profits()
         self.month_dates = QComboBox()
         self.month_dates.addItems(self.get_dates_until_last_month())
@@ -169,6 +187,10 @@ class Statistika(QWidget):
 
         main_vbox.addWidget(QLabel("Μηνιαία Έσοδα"))
         main_vbox.addWidget(self.month_profit_line_edit)
+        main_vbox.addWidget(QLabel("Πιο δημοφιλές Φαγητό:"))
+        main_vbox.addWidget(self.top_food)
+        main_vbox.addWidget(QLabel("Πιο δημοφιλές Ποτό:"))
+        main_vbox.addWidget(self.top_drinks)
         main_vbox.addStretch()
         self.setLayout(main_vbox)
 
@@ -242,13 +264,45 @@ class Statistika(QWidget):
         )
         results = cursor.fetchone()
         drink_profits = results[0]
-        self.month_profit_line_edit.setText(str(food_profits + drink_profits) + "€")
+        if food_profits != None or drink_profits != None:
+            str(food_profits + drink_profits)
+            self.month_profit_line_edit.setText(str(food_profits + drink_profits) + "€")
+        else:
+            self.month_profit_line_edit.setText("0.00" + "€")
 
     def first_day_of_month(self):
         today = datetime.now()
         first_day = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         formatted_first_day = first_day.strftime("%Y-%m-%d %H:%M:%S")
         return formatted_first_day
+
+    def most_popular_food(self):
+        cursor.execute(
+            """
+            SELECT FAGITO.onoma,count(*)
+            FROM PERILAMBANEI
+            JOIN FAGITO ON PERILAMBANEI.id_fagitoy=FAGITO.id_fagitoy
+            GROUP BY FAGITO.id_fagitoy
+            ORDER BY count(*) DESC
+            LIMIT 1;
+        """
+        )
+        results = cursor.fetchone()
+        self.top_food.setText(str(results[0]))
+
+    def most_popular_drink(self):
+        cursor.execute(
+            """
+            SELECT POTO.onoma,count(*)
+            FROM PERILAMBANEI
+            JOIN POTO ON PERILAMBANEI.id_potoy=POTO.id_potoy
+            GROUP BY POTO.id_potoy
+            ORDER BY count(*) DESC
+            LIMIT 1;
+        """
+        )
+        results = cursor.fetchone()
+        self.top_drinks.setText(str(results[0]))
 
 
 if __name__ == "__main__":
