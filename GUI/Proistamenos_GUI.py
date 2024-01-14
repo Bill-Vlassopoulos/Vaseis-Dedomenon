@@ -77,20 +77,35 @@ class Trapezi(QWidget):
         self.setGeometry(300, 300, 450, 450)
         self.setFixedSize(450, 450)
 
-        kod_trap_line_edit = QLineEdit()
-        theseis = QComboBox()
-        topothesia_line_edit = QLineEdit()
+        arithmos_theseon = [str(i) for i in range(2, 21)]
+        self.kod_trap_line_edit = QLineEdit()
+        self.theseis = QComboBox()
+        self.theseis.addItems(arithmos_theseon)
+        self.topothesia_line_edit = QLineEdit()
         add_trapezi_btn = QPushButton("Προσθήκη Τραπεζιού")
-
+        add_trapezi_btn.clicked.connect(self.add_trapezi)
         main_vbox.addWidget(QLabel("Δώστε Όνομα Τραπεζιού:"))
-        main_vbox.addWidget(kod_trap_line_edit)
+        main_vbox.addWidget(self.kod_trap_line_edit)
         main_vbox.addWidget(QLabel("Δώστε Αριθμό Θέσεων:"))
-        main_vbox.addWidget(theseis)
+        main_vbox.addWidget(self.theseis)
         main_vbox.addWidget(QLabel("Δώστε Τοποθεσία Τραπεζιού:"))
-        main_vbox.addWidget(topothesia_line_edit)
+        main_vbox.addWidget(self.topothesia_line_edit)
         main_vbox.addStretch()
         main_vbox.addWidget(add_trapezi_btn)
         self.setLayout(main_vbox)
+
+    def add_trapezi(self):
+        cursor.execute(
+            "insert into TRAPEZI(id_trapeziou,thesi,aritmos_theseon) VALUES(?,?,?)",
+            (
+                self.kod_trap_line_edit.text(),
+                self.topothesia_line_edit.text(),
+                int(self.theseis.currentText()),
+            ),
+        )
+        conn.commit()
+        self.kod_trap_line_edit.setText("")
+        self.topothesia_line_edit.setText("")
 
 
 class Food_Poto(QWidget):
