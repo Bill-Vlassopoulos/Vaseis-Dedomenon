@@ -23,16 +23,34 @@ def main():
 class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
+
+        background_image_path = "bg_image.jpg"  # Replace with your image path
+        pixmap = QPixmap(background_image_path)
+        # Set the background image using a QLabel
+        background_label = QLabel(self)
+        background_label.setPixmap(pixmap)
+        background_label.setGeometry(0, 0, self.width(), self.height())
+
+        # Ensure the QLabel stays in the background
+        background_label.lower()
         ##########################MAINWINDOW BASIC ATTRIBUTES####################
         self.setWindowTitle("Estiatorio")
         self.setGeometry(300, 300, 450, 450)
         self.setFixedSize(450, 450)
-        self.setStyleSheet("background-color: black;")
+        # self.setStyleSheet("background-color: black;")
 
         ##########################CREATING LAYOUTS#########################
         hbox = QHBoxLayout()
         vbox = QVBoxLayout()
         line_edits_vbox = QVBoxLayout()
+
+        ##########################WELCOME TEXT#########################
+        # QLabel for "welcome" text
+        welcome_label = QLabel("Welcome!", self)
+        welcome_label.setStyleSheet(
+            "color: white; font-size: 28px; font-family: 'Times New Roman';"
+        )
+        welcome_label.setAlignment(Qt.AlignCenter)
 
         ########################## USERNAME #########################
         self.name = QLineEdit()
@@ -40,9 +58,10 @@ class MainWindow(QWidget):
         self.name.setFixedHeight(50)
         self.name.setFixedWidth(250)
         self.name.setStyleSheet(
-            "color:white; border:2px solid white; border-radius:10;"
+            "color:#e3e4e5; border:1px solid white; border-radius:10; background-color: transparent;"
         )
-        self.name.setFont(QFont("Arial", 12))
+        self.name.setFont(QFont("Times New Roman", 15))
+        self.name.setAlignment(Qt.AlignCenter)
 
         ########################## PASSWORD #########################
         self.password = QLineEdit()
@@ -50,32 +69,51 @@ class MainWindow(QWidget):
         self.password.setFixedHeight(50)
         self.password.setFixedWidth(250)
         self.password.setStyleSheet(
-            "color:white; border:2px solid white; border-radius:10;"
+            "color:#e3e4e5; border:1px solid white; border-radius:10; background-color: transparent;"
         )
-        self.password.setFont(QFont("Arial", 12))
+        self.password.setFont(QFont("Times New Roman", 15))
+        self.password.setAlignment(Qt.AlignCenter)
+        self.password.setEchoMode(QLineEdit.Password)
 
         ########################## LOG IN BUTTON #########################
         login_button = QPushButton("Log In", self)
-        login_button.setStyleSheet("background-color: orange; color: black;")
+        login_button.setStyleSheet(
+            "background-color: #ede0d4; color: black; border-radius: 10px; padding: 10px;"
+        )
         login_button.clicked.connect(self.check_user)
+        login_button.setFont(QFont("Times New Roman", 14))
 
+        # QLabel for "or" text
+        or_label = QLabel("or", self)
+        or_label.setStyleSheet(
+            "color: white; font-size: 13px; font-family: 'Times New Roman';"
+        )
         ########################## CREATE ACCOUNT BUTTON #########################
         create_account_button = QPushButton("Create Account", self)
-        create_account_button.setStyleSheet("background-color: orange; color: black;")
+        create_account_button.setStyleSheet(
+            "background-color: #ede0d4; color: black; border-radius: 10px; padding: 10px;"
+        )
         create_account_button.clicked.connect(self.create_account)
+        create_account_button.setFont(QFont("Times New Roman", 14))
 
-        line_edits_vbox.setContentsMargins(90, 20, 20, 20)
+        line_edits_vbox.setContentsMargins(90, 20, 90, 20)
         line_edits_vbox.addStretch()
+        line_edits_vbox.addWidget(welcome_label)
+        line_edits_vbox.setSpacing(10)
         line_edits_vbox.addWidget(self.name)
+        line_edits_vbox.setSpacing(10)
         line_edits_vbox.addWidget(self.password)
         line_edits_vbox.addStretch()
 
         vbox.addLayout(line_edits_vbox)
         vbox.addStretch()
-        hbox.addStretch()
-        hbox.addWidget(login_button)
-        hbox.addWidget(create_account_button)
-        hbox.addStretch()
+        vbox.addStretch()
+        vbox.addWidget(login_button, alignment=Qt.AlignCenter)
+        vbox.setSpacing(5)
+        vbox.addWidget(or_label, alignment=Qt.AlignCenter)
+        vbox.setSpacing(5)
+        vbox.addWidget(create_account_button, alignment=Qt.AlignCenter)
+        vbox.addStretch()
 
         vbox.addLayout(hbox)
         self.setLayout(vbox)
@@ -93,12 +131,6 @@ class MainWindow(QWidget):
             self.pelatis_win.show()
             self.close()
         else:
-            # Ο χρήστης δεν βρέθηκε ή ο κωδικός ήταν λανθασμένος
-            QMessageBox.warning(
-                self,
-                "Σφάλμα",
-                "Λανθασμένο όνομα χρήστη ή κωδικός πρόσβασης. Παρακαλώ προσπαθήστε ξανά.",
-            )
             self.name.setText("")
             self.password.setText("")
 
@@ -123,68 +155,88 @@ class SecondWindow(QWidget):
         self.setWindowTitle("Estiatorio")
         self.setGeometry(400, 350, 450, 450)
         self.setFixedSize(450, 450)
-        self.setStyleSheet("background-color: black;")
+
+        # Set the background image using a QLabel
+        background_image_path = "bg_image.jpg"  # Replace with your image path
+        pixmap = QPixmap(background_image_path)
+        background_label = QLabel(self)
+        background_label.setPixmap(pixmap)
+        background_label.setGeometry(0, 0, self.width(), self.height())
+
+        # Ensure the QLabel stays in the background
+        background_label.lower()
+
         vbox = QVBoxLayout()
         main_vbox = QVBoxLayout()
 
         hbox = QHBoxLayout()
 
         self.username = QLineEdit()
-        self.username.setPlaceholderText("username")
+        self.username.setPlaceholderText("Enter username")
         self.username.setFixedHeight(50)
         self.username.setFixedWidth(250)
         self.username.setStyleSheet(
-            "color:white; border:2px solid white; border-radius:10;"
+            "color:white; border:1px solid white; border-radius:10; background-color: transparent;"
         )
-        self.username.setFont(QFont("Arial", 12))
+        self.username.setFont(QFont("Times New Roman", 14))
+        self.username.setAlignment(Qt.AlignCenter)
 
         self.password = QLineEdit()
-        self.password.setPlaceholderText("password")
+        self.password.setPlaceholderText("Enter password")
         self.password.setFixedHeight(50)
         self.password.setFixedWidth(250)
         self.password.setStyleSheet(
-            "color:white; border:2px solid white; border-radius:10;"
+            "color:white; border:1px solid white; border-radius:10; background-color: transparent;"
         )
-        self.password.setFont(QFont("Arial", 12))
+        self.password.setFont(QFont("Times New Roman", 14))
+        self.password.setAlignment(Qt.AlignCenter)
+        self.password.setEchoMode(QLineEdit.Password)
 
         self.tilefono = QLineEdit()
-        self.tilefono.setPlaceholderText("phone number(69********)")
+        self.tilefono.setPlaceholderText("Enter phone number")
         self.tilefono.setFixedHeight(50)
         self.tilefono.setFixedWidth(250)
         self.tilefono.setStyleSheet(
-            "color:white; border:2px solid white; border-radius:10;"
+            "color:white; border:1px solid white; border-radius:10; background-color: transparent;"
         )
-        self.tilefono.setFont(QFont("Arial", 12))
+        self.tilefono.setFont(QFont("Times New Roman", 14))
+        self.tilefono.setAlignment(Qt.AlignCenter)
 
         self.email = QLineEdit()
-        self.email.setPlaceholderText("email (name@example.com)")
+        self.email.setPlaceholderText("Enter email")
         self.email.setFixedHeight(50)
         self.email.setFixedWidth(250)
         self.email.setStyleSheet(
-            "color:white; border:2px solid white; border-radius:10;"
+            "color:white; border:1px solid white; border-radius:10; background-color: transparent;"
         )
-        self.email.setFont(QFont("Arial", 12))
+        self.email.setFont(QFont("Times New Roman", 14))
+        self.email.setAlignment(Qt.AlignCenter)
 
         self.onoma = QLineEdit()
-        self.onoma.setPlaceholderText("name")
+        self.onoma.setPlaceholderText("Enter name")
         self.onoma.setFixedHeight(50)
         self.onoma.setFixedWidth(250)
         self.onoma.setStyleSheet(
-            "color:white; border:2px solid white; border-radius:10;"
+            "color:white; border:1px solid white; border-radius:10; background-color: transparent;"
         )
-        self.onoma.setFont(QFont("Arial", 12))
+        self.onoma.setFont(QFont("Times New Roman", 14))
+        self.onoma.setAlignment(Qt.AlignCenter)
 
         self.epitheto = QLineEdit()
-        self.epitheto.setPlaceholderText("surname")
+        self.epitheto.setPlaceholderText("Enter surname")
         self.epitheto.setFixedHeight(50)
         self.epitheto.setFixedWidth(250)
         self.epitheto.setStyleSheet(
-            "color:white; border:2px solid white; border-radius:10;"
+            "color:white; border:1px solid white; border-radius:10; background-color: transparent;"
         )
-        self.epitheto.setFont(QFont("Arial", 12))
+        self.epitheto.setFont(QFont("Times New Roman", 14))
+        self.epitheto.setAlignment(Qt.AlignCenter)
 
         create_account_button = QPushButton("Create Account", self)
-        create_account_button.setStyleSheet("background-color: orange; color: black;")
+        create_account_button.setStyleSheet(
+            "background-color: #ede0d4; color: black; border-radius: 10px; padding: 10px;"
+        )
+        create_account_button.setFont(QFont("Times New Roman", 14))
         create_account_button.setMinimumSize(100, 50)
         create_account_button.clicked.connect(self.pelatis_window)
         #        create_account_button.clicked.connect(self.create_account)
@@ -195,7 +247,7 @@ class SecondWindow(QWidget):
         vbox.addWidget(self.email)
         vbox.addWidget(self.onoma)
         vbox.addWidget(self.epitheto)
-        vbox.setContentsMargins(90, 40, 40, 40)
+        vbox.setContentsMargins(90, 20, 90, 20)
 
         hbox.addStretch()
         hbox.addWidget(create_account_button)

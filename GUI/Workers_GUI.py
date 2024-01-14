@@ -23,27 +23,45 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         main_vbox = QVBoxLayout()
+        background_image_path = "bg_image.jpg"
+        pixmap = QPixmap(background_image_path)
+
+        # Set the background image using a QLabel
+        background_label = QLabel(self)
+        background_label.setPixmap(pixmap)
+        background_label.setGeometry(0, 0, self.width(), self.height())
+
+        # Ensure the QLabel stays in the background
+        background_label.lower()
+
         self.setWindowTitle("Estiatorio")
         self.setGeometry(300, 300, 450, 450)
         self.setFixedSize(450, 450)
         self.kratiseis_btn = QPushButton("Κρατήσεις")
+        self.kratiseis_btn.setStyleSheet(
+            "background-color: #ede0d4; color: black; border-radius: 10px; padding: 10px;"
+        )
+        self.kratiseis_btn.setFont(QFont("Times New Roman", 14))
         self.kratiseis_btn.clicked.connect(self.open_kratiseis)
 
         self.new_paraggelia_btn = QPushButton("Νέα Παραγγελία")
+        self.new_paraggelia_btn.setStyleSheet(
+            "background-color: #ede0d4; color: black; border-radius: 10px; padding: 10px;"
+        )
+        self.new_paraggelia_btn.setFont(QFont("Times New Roman", 14))
         self.new_paraggelia_btn.clicked.connect(self.open_new_paraggelia)
 
-        self.edit_paraggelia_btn = QPushButton(
-            "Διαχείριση Παραγγελίας/Κόστος Παραγγελίας"
+        self.edit_paraggelia_btn = QPushButton("Διαχείρ. Παραγγελίας")
+        self.edit_paraggelia_btn.setStyleSheet(
+            "background-color: #ede0d4; color: black; border-radius: 10px; padding: 10px;"
         )
+        self.edit_paraggelia_btn.setFont(QFont("Times New Roman", 14))
         self.edit_paraggelia_btn.clicked.connect(self.open_paraggelia_edit)
 
-        self.paradotea_piata_pota_btn = QPushButton("Πιάτα/Ποτά προς παράδοση")
-        self.paradotea_piata_pota_btn.clicked.connect(self.open_paradotea_pp)
-
+        main_vbox.setContentsMargins(110, 40, 110, 40)
         main_vbox.addWidget(self.kratiseis_btn)
         main_vbox.addWidget(self.new_paraggelia_btn)
         main_vbox.addWidget(self.edit_paraggelia_btn)
-        main_vbox.addWidget(self.paradotea_piata_pota_btn)
         self.setLayout(main_vbox)
 
     def open_kratiseis(self):
