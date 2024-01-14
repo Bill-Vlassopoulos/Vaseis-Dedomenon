@@ -1,14 +1,14 @@
-Water, 1.50, 50
-Iced Tea, 2.00, 45
-Coffee (Black), 1.75, 40
-Coke, 1.75, 35
-Sprite, 1.75, 30
-Root Beer, 2.00, 25
-Club Soda, 1.50, 20
-Beer, 4.50, 50
-Wine (House), 6.50, 45
-Margarita, 8.00, 40
-Martini, 9.50, 35
-Whiskey Sour, 7.00, 30
-Rum and Coke, 6.00, 25
-Gin and Tonic, 7.50, 20
+Water, 1.50 
+Iced Tea, 2.00 
+Coffee (Black), 1.75 
+Coke, 1.75 
+Sprite, 1.75 
+Root Beer, 2.00 
+Club Soda, 1.50 
+Beer, 4.50 
+Wine (House), 6.50 
+Margarita, 8.00 
+Martini, 9.50 
+Whiskey Sour, 7.00 
+Rum and Coke, 6.00 
+Gin and Tonic, 7.50 

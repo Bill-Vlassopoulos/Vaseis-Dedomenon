@@ -55,52 +55,10 @@ CREATE TABLE "PARAGGELIA"(
 );
 """,
     """
-CREATE TABLE "MAGEIRAS" (
-	"afm_ypallilou"	integer NOT NULL UNIQUE,
-	"onoma"	varchar(30) NOT NULL,
-	"eponimo"	varchar(50) DEFAULT NULL,
-	"misthos"	INTEGER NOT NULL CHECK("misthos>0"),
-	"tilefono"	varchar(13) NOT NULL,
-	"orario"    varchar (30) NOT NULL,
-	PRIMARY KEY("afm_ypallilou")
-);
-""",
-    """
-CREATE TABLE "SERVITOROS" (
-	"afm_ypallilou"	integer NOT NULL UNIQUE,
-	"onoma"	varchar(30) NOT NULL,
-	"eponimo"	varchar(50) DEFAULT NULL,
-	"misthos"	INTEGER NOT NULL CHECK("misthos>0"),
-	"tilefono"	varchar(13) NOT NULL,
-	"orario"    varchar (30) NOT NULL,
-	PRIMARY KEY("afm_ypallilou")
-);
-""",
-    """
-
-CREATE TABLE "PROMITHEYTIS" (
-	"afm"	integer NOT NULL UNIQUE,
-	"onoma"	varchar(30) NOT NULL,
-	"epitheto"	varchar(50) DEFAULT NULL,
-	"tilefono"	integer NOT NULL,
-	PRIMARY KEY("afm")
-);
-""",
-    """
-CREATE TABLE "YLIKA" (
-	"id_ylikoy"	integer NOT NULL UNIQUE ,
-	"onoma"	varchar(30) NOT NULL,
-	"katigoria"	varchar(50) DEFAULT NULL,
-	"diathesimi_posothta"	integer NOT NULL,
-	PRIMARY KEY("id_ylikoy" AUTOINCREMENT)
-);
-""",
-    """
 CREATE TABLE "FAGITO" (
 	"id_fagitoy" INTEGER NOT NULL UNIQUE ,
 	"onoma" VARCHAR(30) NOT NULL,
 	"kostos" REAL NOT NULL,
-	"posotita" INTEGER,
 	"syntagi" varchar(500) NOT NULL,
     PRIMARY KEY("id_fagitoy" AUTOINCREMENT)
 );
@@ -110,31 +68,10 @@ CREATE TABLE "POTO" (
 	"id_potoy" INTEGER NOT NULL UNIQUE ,
 	"onoma" VARCHAR(30) NOT NULL,
 	"kostos" REAL ,
-	"posotita" INTEGER,
 	PRIMARY KEY("id_potoy" AUTOINCREMENT)
 );
 """,
     """
-CREATE TABLE "PARASKEYAZEI" (
-	"afm_ypallilou"	integer NOT NULL,
-	"id_fagitoy"	integer NOT NULL,
-	FOREIGN KEY("afm_ypallilou") REFERENCES "MAGEIRAS"("afm_ypallilou")
-	FOREIGN KEY("id_fagitoy") REFERENCES "FAGITO"("id_fagitoy"),
-	PRIMARY KEY("afm_ypallilou","id_fagitoy")
-);
-""",
-    """
-CREATE TABLE "APOTELEITAI" (
-	"id_fagitoy" integer NOT NULL,
-	"id_ylikoy" integer NOT NULL,
-	"posotita" integer NOT NULL,
-    FOREIGN KEY("id_fagitoy") REFERENCES "FAGITO"("id_fagitoy"),
-    FOREIGN KEY("id_ylikoy") REFERENCES "YLIKA"("id_ylikoy"),
-	PRIMARY KEY("id_fagitoy","id_ylikoy")
-);
-""",
-    """
-
 CREATE TABLE PERILAMBANEI (
     "id_paraggelias" INTEGER NOT NULL,
     "id_fagitoy" INTEGER,
@@ -143,34 +80,6 @@ CREATE TABLE PERILAMBANEI (
     FOREIGN KEY ("id_paraggelias") REFERENCES PARAGGELIA("id_paraggelias"),
     FOREIGN KEY ("id_potoy") REFERENCES POTO("id_potoy"),
     FOREIGN KEY ("id_fagitoy") REFERENCES FAGITO("id_fagitoy")
-);
-""",
-    """
-CREATE TABLE "ANALAMBANEI" (
-	"id_paraggelias" integer NOT NULL,
-	"afm_ypallilou"	integer NOT NULL,
-    FOREIGN KEY("id_paraggelias") REFERENCES "PARAGGELIA"("id_paraggelias"),
-    FOREIGN KEY("afm_ypallilou") REFERENCES "SERVITOROS"("afm_ypallilou"),
-    PRIMARY KEY("id_paraggelias","afm_ypallilou")
-);
-""",
-    """
-CREATE TABLE "EFODIAZEI" (
-	"afm"	integer NOT NULL,
-	"id_ylikoy"	integer NOT NULL,
-	PRIMARY KEY("id_ylikoy", "afm")
-	FOREIGN KEY("afm") REFERENCES "PROMITHEYTIS"("afm") 
-	FOREIGN KEY("id_ylikoy") REFERENCES "YLIKA"("id_ylikoy") 
-);
-""",
-    """
-CREATE TABLE "PROMITHEVEI" (
-	"afm"	integer NOT NULL,
-	"id_potoy"	integer NOT NULL,
-	"imer_paradosis" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-	PRIMARY KEY("afm", "id_potoy"),
-    FOREIGN KEY("afm") REFERENCES "PROMITHEYTIS"("afm"),
-    FOREIGN KEY("id_potoy") REFERENCES "POTO"("id_potoy")
 );
 """,
     """

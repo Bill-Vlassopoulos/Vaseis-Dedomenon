@@ -136,11 +136,10 @@ class Food_Poto(QWidget):
 
     def add_food(self):
         cursor.execute(
-            "insert into FAGITO(onoma,kostos,posotita,syntagi) VALUES(?,?,?,?)",
+            "insert into FAGITO(onoma,kostos,syntagi) VALUES(?,?,?)",
             (
                 self.onoma_food_line_edit.text(),
                 float(self.kostos_line_edit.text()),
-                10,
                 self.syntagi_text_edit.toPlainText(),
             ),
         )
@@ -151,11 +150,10 @@ class Food_Poto(QWidget):
 
     def add_poto(self):
         cursor.execute(
-            "insert into POTO(onoma,kostos,posotita) VALUES(?,?,?)",
+            "insert into POTO(onoma,kostos) VALUES(?,?)",
             (
                 self.onoma_poto_line_edit.text(),
                 float(self.kostos1_line_edit.text()),
-                10,
             ),
         )
         conn.commit()

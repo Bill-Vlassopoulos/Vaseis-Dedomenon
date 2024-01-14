@@ -5,9 +5,8 @@ cursor = conn.cursor()
 
 tables = {
     "TRAPEZI": 3,
-    "YLIKA": 3,
-    "FAGITO": 4,
-    "POTO": 3,
+    "FAGITO": 3,
+    "POTO": 2,
 }
 
 
