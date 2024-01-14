@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.sip import voidptr
 from datetime import datetime, timedelta
 import sqlite3
+import hashlib
 
 conn = sqlite3.connect("SmartRestaurant.db")
 cursor = conn.cursor()
@@ -80,26 +81,40 @@ class MainWindow(QWidget):
         self.setLayout(vbox)
 
     def check_user(self):
+        hashed_password = self.hash_password(self.password.text())
         query = "SELECT username, password FROM PELATIS"
         cursor.execute(query)
         results = cursor.fetchall()
-        if (self.name.text(), self.password.text()) in results:
+        if (self.name.text(), hashed_password) in results:
+            # Ο χρήστης έχει συνδεθεί με επιτυχία
             self.pelatis_win = PelatisWindow(
-                username=self.name.text(), password=self.password.text()
+                username=self.name.text(), password=hashed_password
             )
             self.pelatis_win.show()
             self.close()
         else:
+            # Ο χρήστης δεν βρέθηκε ή ο κωδικός ήταν λανθασμένος
+            QMessageBox.warning(
+                self,
+                "Σφάλμα",
+                "Λανθασμένο όνομα χρήστη ή κωδικός πρόσβασης. Παρακαλώ προσπαθήστε ξανά.",
+            )
             self.name.setText("")
             self.password.setText("")
 
     def create_account(self):
         self.second = SecondWindow()
         self.second.show()
+        self.close()
 
     def pelatis_window(self):
         self.pelatis_win = PelatisWindow()
         self.pelatis_win.show()
+
+    def hash_password(self, password):
+        # Κατακερματίστε τον κωδικό χρησιμοποιώντας τη βιβλιοθήκη hashlib
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
+        return hashed_password
 
 
 class SecondWindow(QWidget):
@@ -195,8 +210,9 @@ class SecondWindow(QWidget):
         query = "SELECT username, password FROM PELATIS"
         cursor.execute(query)
         results = cursor.fetchall()
-        self.email
-        if (self.username, self.password) in results:
+        hashed_password = self.hash_password(self.password.text())
+
+        if (self.username.text(), hashed_password) in results:
             self.username.setText("")
             self.password.setText("")
             self.onoma.setText("")
@@ -204,6 +220,7 @@ class SecondWindow(QWidget):
             self.email.setText("")
             self.tilefono.setText("")
         else:
+            hashed_password = self.hash_password(self.password.text())
             query = "INSERT INTO PELATIS (onoma, eponimo, tilefono, email, username, password) VALUES(?,?,?,?,?,?)"
             cursor.execute(
                 query,
@@ -213,14 +230,20 @@ class SecondWindow(QWidget):
                     self.tilefono.text(),
                     self.email.text(),
                     self.username.text(),
-                    self.password.text(),
+                    hashed_password,
                 ),
             )
             conn.commit()
             username = self.username.text()
-            password = self.password.text()
+            password = hashed_password
             self.pelatis_win = PelatisWindow(username=username, password=password)
             self.pelatis_win.show()
+            self.close()
+
+    def hash_password(self, password):
+        # Κατακερματίστε τον κωδικό χρησιμοποιώντας τη βιβλιοθήκη hashlib
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
+        return hashed_password
 
 
 class PelatisWindow(QWidget):
