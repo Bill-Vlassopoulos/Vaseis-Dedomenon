@@ -49,7 +49,7 @@ CREATE TABLE "PARAGGELIA"(
     "id_paraggelias" INTEGER NOT NULL UNIQUE ,
     "imer_ora" datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
     "kostos" REAL,
-    "id_trapeziou" INTEGER NOT NULL,
+    "id_trapeziou" varchar(10) NOT NULL,
     FOREIGN KEY("id_trapeziou") REFERENCES "TRAPEZI"("id_trapeziou"),
     PRIMARY KEY("id_paraggelias" AUTOINCREMENT)
 );
@@ -73,10 +73,10 @@ CREATE TABLE "POTO" (
 """,
     """
 CREATE TABLE PERILAMBANEI (
+    "id_perilambanei" INTEGER PRIMARY KEY AUTOINCREMENT,
     "id_paraggelias" INTEGER NOT NULL,
     "id_fagitoy" INTEGER,
     "id_potoy" INTEGER,
-    "id_perilambanei" INTEGER PRIMARY KEY AUTOINCREMENT,
     FOREIGN KEY ("id_paraggelias") REFERENCES PARAGGELIA("id_paraggelias"),
     FOREIGN KEY ("id_potoy") REFERENCES POTO("id_potoy"),
     FOREIGN KEY ("id_fagitoy") REFERENCES FAGITO("id_fagitoy")

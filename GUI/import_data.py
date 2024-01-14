@@ -7,6 +7,8 @@ tables = {
     "TRAPEZI": 3,
     "FAGITO": 3,
     "POTO": 2,
+    "PARAGGELIA": 3,
+    "PERILAMBANEI": 3,
 }
 
 
