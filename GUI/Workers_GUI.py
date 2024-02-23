@@ -339,7 +339,7 @@ class Paraggelia_Management(QWidget):
         down_right_vbox.addWidget(add_food_btn)
         down_right_vbox.addWidget(add_drink_btn)
         down_right_vbox.addWidget(delete_btn)
-        down_right_vbox.addWidget(ypovoli_btn)
+        # down_right_vbox.addWidget(ypovoli_btn)
         down_right_vbox.addStretch()
         down_right_vbox.addWidget(kostos_label)
         down_right_vbox.addWidget(self.kostos_line_edit)
